@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X } from "lucide-react"
 import Link from "next/link"
 import { defaultMenuCategories } from "@/lib/menu-data-default"
+import { menuCategoriesFromPublic } from "@/lib/menu-data-from-public"
 
 interface Dish {
   name: string
@@ -38,17 +39,17 @@ export default function AdminAsportoPage() {
         if (data.length > 0) {
           setCategories(data)
         } else {
-          // Se non ci sono dati salvati, carica i dati di default
-          setCategories(defaultMenuCategories)
+          // Se non ci sono dati salvati, carica i dati dalla pagina pubblica
+          setCategories(menuCategoriesFromPublic)
         }
       } else {
-        // Se c'è un errore, carica i dati di default
-        setCategories(defaultMenuCategories)
+        // Se c'è un errore, carica i dati dalla pagina pubblica
+        setCategories(menuCategoriesFromPublic)
       }
     } catch (error) {
       console.error("Error loading menu:", error)
-      // In caso di errore, carica i dati di default
-      setCategories(defaultMenuCategories)
+      // In caso di errore, carica i dati dalla pagina pubblica
+      setCategories(menuCategoriesFromPublic)
     } finally {
       setLoading(false)
     }
@@ -227,7 +228,7 @@ export default function AdminAsportoPage() {
               <ArrowLeft className="w-4 h-4" />
               <span>Torna al pannello</span>
             </Link>
-            <h1 className="text-4xl font-bold mb-2">Gestione Asporto</h1>
+            <h1 className="text-4xl font-bold mb-2">Gestione Menù</h1>
             <p className="text-muted-foreground">Modifica piatti, prezzi, descrizioni e immagini</p>
           </div>
           <button

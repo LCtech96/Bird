@@ -328,21 +328,7 @@ export default function AsportoPage() {
       <div className="container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Asporto</h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6">
-              Consulta il menu e chiamaci per ordinare.
-            </p>
-
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-              <div className="text-muted-foreground">
-                <a className="hover:text-foreground transition-colors" href="tel:+393207279857">
-                  WhatsApp / Tel: +39 320 727 9857
-                </a>
-              </div>
-              <div className="text-muted-foreground">
-                <span>Orari: 07:00 - 01:00</span>
-              </div>
-            </div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Menù</h1>
           </div>
 
           <div className="space-y-2">
