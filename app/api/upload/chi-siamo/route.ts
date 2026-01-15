@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     await requireAuth()
 
     const body = await request.json()
-    const { memberId, fileName, imageData, imagePath } = body
+    const { memberId, fileName, imageData } = body
 
     if (!imageData || !fileName) {
       return NextResponse.json(
@@ -18,20 +18,26 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+    
+    // Verifica che imageData sia base64 (non un percorso)
+    if (!imageData.startsWith("data:image")) {
+      return NextResponse.json(
+        { error: "L'immagine deve essere in formato base64" },
+        { status: 400 }
+      )
+    }
 
     // Salva l'immagine in Supabase Storage o come dato
     // Per ora, salva solo il percorso e l'immagine come base64 in admin_data
     if (supabaseServer) {
-      // Salva l'immagine temporaneamente in admin_data
-      // In futuro, potresti usare Supabase Storage per un approccio migliore
+      // Salva l'immagine come base64 in admin_data (mai percorsi hardcoded)
       const { error } = await supabaseServer
         .from("admin_data")
         .upsert({
           key: `chi_siamo_image_${memberId}`,
           value: {
             fileName: fileName,
-            imagePath: imagePath,
-            imageData: imageData, // Base64
+            imageData: imageData, // Solo base64, mai percorsi
             uploadedAt: new Date().toISOString()
           },
           updated_at: new Date().toISOString()
