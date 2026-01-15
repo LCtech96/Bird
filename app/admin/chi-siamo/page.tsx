@@ -45,12 +45,21 @@ export default function AdminChiSiamoPage() {
     setSaving(true)
     setMessage(null)
     try {
+      // Pulisci i percorsi hardcoded prima di salvare - mantieni solo base64 o stringa vuota
+      const cleanedMembers = teamMembers.map(member => ({
+        ...member,
+        // Se l'immagine è un percorso hardcoded (inizia con / ma non è base64), rimuovilo
+        image: member.image && member.image.startsWith("/") && !member.image.startsWith("data:image") 
+          ? "" 
+          : member.image
+      }))
+      
       const response = await fetch("/api/chi-siamo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(teamMembers),
+        body: JSON.stringify(cleanedMembers),
       })
 
       if (response.ok) {
@@ -98,6 +107,54 @@ export default function AdminChiSiamoPage() {
     setTeamMembers([...teamMembers, newMember])
   }
 
+  // Funzione per ridimensionare e comprimere l'immagine
+  const resizeAndCompressImage = (file: File, maxWidth: number = 1200, quality: number = 0.85): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new window.Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+
+          // Calcola le nuove dimensioni mantenendo l'aspect ratio
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width
+              width = maxWidth
+            }
+          } else {
+            if (height > maxWidth) {
+              width = (width * maxWidth) / height
+              height = maxWidth
+            }
+          }
+
+          canvas.width = width
+          canvas.height = height
+
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            reject(new Error('Impossibile ottenere il contesto del canvas'))
+            return
+          }
+
+          // Disegna l'immagine ridimensionata sul canvas
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // Converti in base64 con compressione JPEG
+          const base64 = canvas.toDataURL('image/jpeg', quality)
+          resolve(base64)
+        }
+        img.onerror = () => reject(new Error('Errore nel caricamento dell\'immagine'))
+        img.src = e.target?.result as string
+      }
+      reader.onerror = () => reject(new Error('Errore nella lettura del file'))
+      reader.readAsDataURL(file)
+    })
+  }
+
   const handleImageUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -105,12 +162,6 @@ export default function AdminChiSiamoPage() {
     // Verifica che sia un'immagine
     if (!file.type.startsWith("image/")) {
       setMessage({ type: "error", text: "Il file deve essere un&apos;immagine" })
-      return
-    }
-
-    // Verifica la dimensione del file (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage({ type: "error", text: "L&apos;immagine deve essere inferiore a 5MB" })
       return
     }
 
@@ -122,74 +173,50 @@ export default function AdminChiSiamoPage() {
     updated[index] = { ...updated[index], image: previewUrl }
     setTeamMembers(updated)
 
-    // Genera un nome file univoco
-    const fileName = `team-${teamMembers[index].id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-    const imagePath = `/team/${fileName}`
-    
     try {
-      // Prova a caricare l'immagine convertendola in base64 e salvandola in Supabase
-      const reader = new FileReader()
-      reader.onloadend = async () => {
-        try {
-          // Converti l'immagine in base64
-          const base64Image = reader.result as string
-          
-          // Salva i dati dell'immagine in Supabase come base64 temporaneamente
-          // In futuro potresti usare Supabase Storage per un approccio migliore
-          const response = await fetch("/api/upload/chi-siamo", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              memberId: teamMembers[index].id.toString(),
-              fileName: fileName,
-              imageData: base64Image,
-              imagePath: imagePath
-            }),
-          })
+      setMessage({ type: "success", text: "Elaborazione immagine in corso..." })
+      
+      // Ridimensiona e comprimi l'immagine
+      const base64Image = await resizeAndCompressImage(file)
+      
+      // Genera un nome file univoco per riferimento
+      const fileName = `team-${teamMembers[index].id}-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+      
+      // Salva i dati dell'immagine in Supabase come base64
+      const response = await fetch("/api/upload/chi-siamo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          memberId: teamMembers[index].id.toString(),
+          fileName: fileName,
+          imageData: base64Image, // Sempre base64, mai percorso
+        }),
+      })
 
-          if (response.ok) {
-            const data = await response.json()
-            // Aggiorna con il base64 dell'immagine (non il percorso)
-            updated[index] = { ...updated[index], image: data.imageUrl || base64Image }
-            setTeamMembers(updated)
-            setMessage({ type: "success", text: "Immagine caricata con successo!" })
-            setTimeout(() => setMessage(null), 3000)
-            
-            // Rilascia l'URL temporaneo dopo un breve delay per assicurare il rendering del base64
-            setTimeout(() => {
-              URL.revokeObjectURL(previewUrl)
-            }, 500)
-          } else {
-            // Se l'upload fallisce, usa il base64 direttamente
-            updated[index] = { ...updated[index], image: base64Image }
-            setTeamMembers(updated)
-            setMessage({ 
-              type: "success", 
-              text: "Immagine caricata localmente. Ricorda di salvare le modifiche." 
-            })
-            setTimeout(() => setMessage(null), 5000)
-            setTimeout(() => {
-              URL.revokeObjectURL(previewUrl)
-            }, 500)
-          }
-        } catch (error) {
-          console.error("Error uploading image:", error)
-          // In caso di errore, usa il base64 direttamente
-          updated[index] = { ...updated[index], image: base64Image }
-          setTeamMembers(updated)
-          setMessage({ 
-            type: "success", 
-            text: "Immagine caricata localmente. Ricorda di salvare le modifiche." 
-          })
-          setTimeout(() => setMessage(null), 5000)
-          setTimeout(() => {
-            URL.revokeObjectURL(previewUrl)
-          }, 500)
-        }
+      if (response.ok) {
+        const data = await response.json()
+        // Aggiorna sempre con base64 (mai percorsi hardcoded)
+        updated[index] = { ...updated[index], image: data.imageUrl || base64Image }
+        setTeamMembers(updated)
+        setMessage({ type: "success", text: "Immagine caricata e ottimizzata con successo!" })
+        setTimeout(() => setMessage(null), 3000)
+      } else {
+        // Se l'upload fallisce, usa comunque il base64 direttamente
+        updated[index] = { ...updated[index], image: base64Image }
+        setTeamMembers(updated)
+        setMessage({ 
+          type: "success", 
+          text: "Immagine ottimizzata e caricata localmente. Ricorda di salvare le modifiche." 
+        })
+        setTimeout(() => setMessage(null), 5000)
       }
-      reader.readAsDataURL(file)
+      
+      // Rilascia l'URL temporaneo dopo un breve delay
+      setTimeout(() => {
+        URL.revokeObjectURL(previewUrl)
+      }, 500)
     } catch (error) {
       console.error("Error processing image:", error)
       setMessage({ 
@@ -199,6 +226,9 @@ export default function AdminChiSiamoPage() {
       setTimeout(() => setMessage(null), 5000)
       // Mantieni il blob URL temporaneo invece di usare un percorso hardcoded
     }
+    
+    // Reset dell'input file per permettere di ricaricare la stessa immagine
+    e.target.value = ""
   }
 
   if (loading) {
@@ -334,15 +364,8 @@ export default function AdminChiSiamoPage() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
-                  <input
-                    type="text"
-                    value={member.image}
-                    onChange={(e) => updateMember(index, "image", e.target.value)}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg"
-                    placeholder="/path/to/image.png"
-                  />
                   <p className="text-xs text-muted-foreground">
-                    Clicca sull&apos;immagine per caricare un nuovo file, oppure inserisci il percorso manualmente
+                    Clicca sull&apos;immagine per caricare un nuovo file. Le immagini vengono automaticamente ridimensionate e ottimizzate.
                   </p>
                 </div>
 
