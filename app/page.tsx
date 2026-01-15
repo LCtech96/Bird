@@ -42,6 +42,15 @@ interface Cocktail {
   visible?: boolean
 }
 
+interface DailyPost {
+  id: string
+  type: "image" | "video"
+  mediaUrl: string
+  title: string
+  description: string
+  createdAt: string
+}
+
 function VideoPlayer({ video, isEven }: { video: Video; isEven: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -104,6 +113,7 @@ export default function Home() {
   const [cocktails, setCocktails] = useState<Cocktail[]>([])
   const [coverImage, setCoverImage] = useState<string>("")
   const [profileImage, setProfileImage] = useState<string>("")
+  const [dailyPosts, setDailyPosts] = useState<DailyPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -133,6 +143,13 @@ export default function Home() {
           if (data.profileImage) {
             setProfileImage(data.profileImage)
           }
+        }
+        
+        // Carica i post del giorno
+        const postsResponse = await fetch("/api/posts", { cache: "no-store" })
+        if (postsResponse.ok) {
+          const postsData = await postsResponse.json()
+          setDailyPosts(postsData.posts || [])
         }
       } catch (error) {
         console.error("Error loading content:", error)
@@ -206,6 +223,41 @@ export default function Home() {
       <div className="pt-0 md:pt-16">
         <HeroSection coverImage={coverImage} profileImage={profileImage} />
       </div>
+
+      {/* Post del Giorno - sotto il nome del ristorante */}
+      {dailyPosts.length > 0 && (
+        <div className="container mx-auto px-4 py-8 md:py-12">
+          <div className="max-w-4xl mx-auto space-y-8">
+            {dailyPosts.map((post) => (
+              <div key={post.id} className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl">
+                {post.type === "image" ? (
+                  <img
+                    src={post.mediaUrl}
+                    alt={post.title}
+                    className="w-full aspect-video object-cover"
+                  />
+                ) : (
+                  <video
+                    src={post.mediaUrl}
+                    className="w-full aspect-video object-cover"
+                    controls
+                  />
+                )}
+                <div className="p-6">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ fontFamily: "var(--font-playfair), serif" }}>
+                    {post.title}
+                  </h3>
+                  {post.description && (
+                    <p className="text-muted-foreground text-base md:text-lg leading-relaxed" style={{ fontFamily: "var(--font-cormorant), serif" }}>
+                      {post.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Sezione Prodotti e Qualità - tra Hero e Tramonti */}
       {products.length > 0 && (

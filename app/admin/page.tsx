@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Settings, Utensils, Brain, Image as ImageIcon, LogOut, Users } from "lucide-react"
+import { Settings, Utensils, Brain, Image as ImageIcon, LogOut, Users, FileText } from "lucide-react"
 import Link from "next/link"
 
 export default function AdminDashboard() {
@@ -65,19 +65,19 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Bottone 1: Gestione Asporto */}
+          {/* Bottone 1: Gestione Menù */}
           <Link
-            href="/admin/asporto"
+            href="/admin/menu"
             className="group bg-card border border-border rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 hover:scale-105"
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="p-4 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
                 <Utensils className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold">Gestione Asporto</h2>
+              <h2 className="text-2xl font-bold">Gestione Menù</h2>
             </div>
             <p className="text-muted-foreground">
-              Modifica prezzi, nomi, ingredienti, immagini e visibilità dei piatti nella pagina asporto
+              Modifica prezzi, nomi, ingredienti, immagini e visibilità dei piatti nel menù
             </p>
           </Link>
 
@@ -126,6 +126,22 @@ export default function AdminDashboard() {
             </div>
             <p className="text-muted-foreground">
               Modifica immagini, titoli e descrizioni dei membri del team
+            </p>
+          </Link>
+
+          {/* Bottone 5: Post del Giorno */}
+          <Link
+            href="/admin/posts"
+            className="group bg-card border border-border rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-4 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
+                <FileText className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold">Post del Giorno</h2>
+            </div>
+            <p className="text-muted-foreground">
+              Crea e gestisci i post del giorno con foto, video, titolo e descrizione
             </p>
           </Link>
         </div>
