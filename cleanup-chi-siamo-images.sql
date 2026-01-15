@@ -37,31 +37,10 @@ SET value = (
 WHERE key = 'chi_siamo'
   AND jsonb_typeof(value::jsonb) = 'array';
 
--- 3. Verifica i risultati finali
+-- 3. Verifica i risultati finali (verifica semplice)
 SELECT key, 
-       CASE 
-         WHEN jsonb_typeof(value::jsonb) = 'array' THEN 
-           jsonb_pretty(
-             jsonb_agg(
-               jsonb_build_object(
-                 'id', elem->>'id',
-                 'title', elem->>'title',
-                 'image', CASE 
-                   WHEN elem->>'image' LIKE 'data:image%' THEN '[BASE64]' 
-                   WHEN elem->>'image' = '' THEN '[VUOTO]'
-                   ELSE elem->>'image'
-                 END
-               )
-             )
-           )
-         ELSE jsonb_pretty(value::jsonb)
-       END as content_preview
+       jsonb_pretty(value::jsonb) as content_preview
 FROM admin_data
-CROSS JOIN LATERAL (
-  CASE 
-    WHEN jsonb_typeof(value::jsonb) = 'array' THEN jsonb_array_elements(value::jsonb)
-    ELSE jsonb_array_elements(value::jsonb->'members')
-  END
-) AS elem(elem)
 WHERE key = 'chi_siamo'
-GROUP BY key, value;
+ORDER BY updated_at DESC
+LIMIT 1;
