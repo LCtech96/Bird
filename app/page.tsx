@@ -8,9 +8,7 @@ import { Footer } from "@/components/Footer"
 import { AIAssistant } from "@/components/AIAssistant"
 import { useEffect, useRef, useState } from "react"
 
-// Immagini locali
-const coverImage = "/cop.png"
-const profileImage = "/profile.png"
+// Immagini caricate dinamicamente da Supabase
 
 interface Video {
   id: string
@@ -104,6 +102,8 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
   const [barman, setBarman] = useState<{ id: string; src: string; title: string; description: string; visible?: boolean } | null>(null)
   const [cocktails, setCocktails] = useState<Cocktail[]>([])
+  const [coverImage, setCoverImage] = useState<string>("")
+  const [profileImage, setProfileImage] = useState<string>("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -125,6 +125,13 @@ export default function Home() {
           setCocktails(visibleCocktails)
           if (data.barman && data.barman.visible !== false) {
             setBarman(data.barman)
+          }
+          // Carica cover e profile images
+          if (data.coverImage) {
+            setCoverImage(data.coverImage)
+          }
+          if (data.profileImage) {
+            setProfileImage(data.profileImage)
           }
         }
       } catch (error) {
@@ -347,19 +354,6 @@ export default function Home() {
                         <VideoPlayer video={video} isEven={isEven} />
                       </div>
                       
-                      {/* Immagine terrazza dopo il primo video */}
-                      {index === 0 && (
-                        <div className="w-full">
-                          <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img 
-                              src="/dg.png" 
-                              alt="La nostra terrazza vista sui faraglioni"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )
                 })}
@@ -392,43 +386,6 @@ export default function Home() {
                         <VideoPlayer video={video} isEven={isEven} />
                       </div>
                       
-                      {/* Immagini statiche dopo il primo video (d.mp4) */}
-                      {isFirstVideo && (
-                        <div className="space-y-6 md:space-y-8">
-                          <div className="w-full">
-                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img 
-                                src="/q.png" 
-                                alt="I nostri spaghetti alle cozze e vongole veraci"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="w-full">
-                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img 
-                                src="/4.png" 
-                                alt="I nostri spaghetti al nero di seppia e ricchi di mare"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="w-full">
-                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img 
-                                src="/l.png" 
-                                alt="Le nostre linguine all'astice"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      )}
                       
                       {/* Immagine dopo il video (da admin) */}
                       {imageAfter && !isFirstVideo && (

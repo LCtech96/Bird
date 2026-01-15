@@ -74,40 +74,11 @@ const DEFAULT_EDITABLE_IMAGES = [
   { id: "9", src: "/9.png", title: "", description: "", visible: true }
 ]
 
-const DEFAULT_HOME_IMAGES = [
-  {
-    id: "dg",
-    src: "/dg.png",
-    title: "La nostra terrazza",
-    description: "La nostra terrazza si affaccia direttamente sui faraglioni, offrendo una vista mozzafiato sul mare cristallino di Terrasini. Un luogo unico dove potete godere dei nostri piatti di pesce freschissimo mentre ammirate lo spettacolo naturale che solo questa posizione privilegiata può offrire.",
-    visible: true
-  },
-  {
-    id: "q",
-    src: "/q.png",
-    title: "I nostri spaghetti alle cozze e vongole veraci",
-    description: "Un piatto che celebra la tradizione siciliana con cozze e vongole veraci freschissime, aglio, prezzemolo e un tocco di vino bianco. Gli spaghetti perfettamente al dente si sposano con il sapore autentico del mare.",
-    visible: true
-  },
-  {
-    id: "4",
-    src: "/4.png",
-    title: "I nostri spaghetti al nero di seppia e ricchi di mare",
-    description: "Un piatto dal sapore intenso e caratteristico, preparato con il nero di seppia freschissimo e arricchito con frutti di mare selezionati. Gli spaghetti perfettamente al dente si colorano del nero profondo della seppia, creando un'esperienza culinaria unica che celebra i sapori autentici del nostro mare.",
-    visible: true
-  },
-  {
-    id: "l",
-    src: "/l.png",
-    title: "Le nostre linguine all'astice",
-    description: "Linguine di grano duro con astice fresco appena pescato, pomodorini pachino e basilico siciliano. Un piatto di lusso che esalta la dolcezza dell'astice e la ricchezza del mare, servito con eleganza e raffinatezza.",
-    visible: true
-  }
-]
+const DEFAULT_HOME_IMAGES: Array<{ id: string; src: string; title: string; description: string; visible: boolean }> = []
 
 const DEFAULT_CONTENT = {
-  coverImage: "/cop.png",
-  profileImage: "/profile.png",
+  coverImage: "",
+  profileImage: "",
   videos: DEFAULT_VIDEOS,
   images: [],
   editableImages: DEFAULT_EDITABLE_IMAGES,
@@ -117,21 +88,50 @@ const DEFAULT_CONTENT = {
 // GET - Carica i contenuti
 export async function GET() {
   try {
-    // Prova a caricare da Supabase
+    let content = { ...DEFAULT_CONTENT }
+    
+    // Carica cover e profile images da Supabase
     if (supabaseServer) {
+      // Carica cover image
+      const { data: coverData } = await supabaseServer
+        .from("admin_data")
+        .select("value")
+        .eq("key", "hero_cover_image")
+        .single()
+      
+      if (coverData?.value?.imageData) {
+        content.coverImage = coverData.value.imageData
+      }
+      
+      // Carica profile image
+      const { data: profileData } = await supabaseServer
+        .from("admin_data")
+        .select("value")
+        .eq("key", "hero_profile_image")
+        .single()
+      
+      if (profileData?.value?.imageData) {
+        content.profileImage = profileData.value.imageData
+      }
+      
+      // Carica altri contenuti
       const { data, error } = await supabaseServer
         .from("admin_data")
         .select("value")
         .eq("key", "content")
         .single()
 
-      if (!error && data) {
-        return NextResponse.json(data.value || DEFAULT_CONTENT)
+      if (!error && data?.value) {
+        // Merge con cover e profile images
+        content = {
+          ...data.value,
+          coverImage: content.coverImage || data.value.coverImage || "",
+          profileImage: content.profileImage || data.value.profileImage || ""
+        }
       }
     }
     
-    // Fallback: restituisci dati di default
-    return NextResponse.json(DEFAULT_CONTENT)
+    return NextResponse.json(content)
   } catch (error) {
     console.error("Error loading content:", error)
     return NextResponse.json(DEFAULT_CONTENT)

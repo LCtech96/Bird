@@ -23,8 +23,8 @@ interface Content {
 
 export default function AdminContentPage() {
   const [content, setContent] = useState<Content>({
-    coverImage: "/cop.png",
-    profileImage: "/profile.png",
+    coverImage: "",
+    profileImage: "",
     videos: [],
     images: [],
     editableImages: []
@@ -77,13 +77,49 @@ export default function AdminContentPage() {
   }
 
   const handleImageUpload = async (type: "cover" | "profile", file: File) => {
-    // Qui implementeresti l'upload dell'immagine
-    // Per ora salva solo il nome del file
-    const imageUrl = `/uploads/${file.name}`
-    if (type === "cover") {
-      setContent({ ...content, coverImage: imageUrl })
-    } else {
-      setContent({ ...content, profileImage: imageUrl })
+    try {
+      setMessage("Caricamento immagine...")
+      
+      // Converti il file in base64
+      const reader = new FileReader()
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string
+        
+        // Upload su Supabase
+        const response = await fetch("/api/upload/hero-images", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type,
+            fileName: file.name,
+            imageData: base64Image
+          })
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          // Aggiorna il contenuto con il base64
+          if (type === "cover") {
+            setContent({ ...content, coverImage: data.imageUrl })
+          } else {
+            setContent({ ...content, profileImage: data.imageUrl })
+          }
+          setMessage("Immagine caricata con successo! Ricorda di salvare.")
+          setTimeout(() => setMessage(""), 3000)
+        } else {
+          setMessage("Errore durante il caricamento dell'immagine")
+          setTimeout(() => setMessage(""), 3000)
+        }
+      }
+      reader.onerror = () => {
+        setMessage("Errore durante la lettura del file")
+        setTimeout(() => setMessage(""), 3000)
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      setMessage("Errore durante il caricamento dell'immagine")
+      setTimeout(() => setMessage(""), 3000)
     }
   }
 
@@ -316,7 +352,7 @@ export default function AdminContentPage() {
                   value={content.coverImage}
                   onChange={(e) => setContent({ ...content, coverImage: e.target.value })}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-                  placeholder="/cop.png"
+                  placeholder="Carica un'immagine di copertina"
                 />
               </div>
             </div>
@@ -348,7 +384,7 @@ export default function AdminContentPage() {
                   value={content.profileImage}
                   onChange={(e) => setContent({ ...content, profileImage: e.target.value })}
                   className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-                  placeholder="/profile.png"
+                  placeholder="Carica un'immagine profilo"
                 />
               </div>
             </div>
