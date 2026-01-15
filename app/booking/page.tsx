@@ -29,7 +29,7 @@ export default function BookingPage() {
     })
 
     // Crea il messaggio WhatsApp
-    const message = `*RICHIESTA DI PRENOTAZIONE - Ristorante Barinello*\n\n` +
+    const message = `*RICHIESTA DI PRENOTAZIONE - Bird Restaurant*\n\n` +
       `⚠️ *ATTENZIONE: Questa è una RICHIESTA di prenotazione, non una prenotazione confermata.*\n` +
       `La disponibilità verrà valutata dal proprietario del locale.\n\n` +
       `*Dettagli della richiesta:*\n` +

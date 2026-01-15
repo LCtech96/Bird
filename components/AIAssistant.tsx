@@ -34,7 +34,7 @@ export function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Ciao! 👋 Sono l'assistente del Ristorante Barinello. Come posso aiutarti oggi?",
+      content: "Ciao! 👋 Sono l'assistente del Bird Restaurant. Come posso aiutarti oggi?",
     },
   ])
   const [input, setInput] = useState("")
@@ -125,7 +125,7 @@ export function AIAssistant() {
     // Saluti
     if (message.match(/^(ciao|salve|buongiorno|buonasera|buon pomeriggio|hey|hi)$/)) {
       return {
-        message: "Ciao! 👋 Benvenuto al Ristorante Barinello. Come posso aiutarti?",
+        message: "Ciao! 👋 Benvenuto al Bird Restaurant. Come posso aiutarti?",
         hasBookingInterest: false
       }
     }
@@ -582,7 +582,7 @@ export function AIAssistant() {
       setMessages([
         {
           role: "assistant",
-          content: "Ciao! 👋 Sono l'assistente del Ristorante Barinello. Come posso aiutarti oggi?",
+          content: "Ciao! 👋 Sono l'assistente del Bird Restaurant. Come posso aiutarti oggi?",
         },
       ])
       setHasBookingInterest(false)
@@ -611,7 +611,7 @@ export function AIAssistant() {
       .map((msg) => `${msg.role === "user" ? "Cliente" : "Assistente"}: ${msg.content}`)
       .join("\n\n")
     
-    return `*Nuova richiesta da Assistente AI Barinello*\n\n${summary}`
+    return `*Nuova richiesta da Assistente AI Bird Restaurant*\n\n${summary}`
   }
 
   const handleWhatsApp = () => {
@@ -645,7 +645,7 @@ export function AIAssistant() {
           <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
-              <h3 className="font-semibold">Assistente Barinello</h3>
+              <h3 className="font-semibold">Assistente Bird Restaurant</h3>
             </div>
             <div className="flex items-center gap-2">
               <button

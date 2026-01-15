@@ -1,4 +1,4 @@
-# Configurazione Supabase per Barinello
+# Configurazione Supabase per Bird Restaurant
 
 ## Informazioni dal Database
 

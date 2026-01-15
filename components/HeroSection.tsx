@@ -28,7 +28,7 @@ export function HeroSection({ coverImage, profileImage }: HeroSectionProps) {
           <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-background shadow-lg">
             <Image
               src={profileImage}
-              alt="Ristorante Barinello"
+              alt="Bird Restaurant"
               fill
               className="object-cover"
               priority
@@ -39,8 +39,7 @@ export function HeroSection({ coverImage, profileImage }: HeroSectionProps) {
 
       {/* Title and Name */}
       <div className="container mx-auto px-4 mt-6 text-center">
-        <h2 className="text-lg md:text-xl text-muted-foreground mb-2">Tra i faraglioni e la vista del mare</h2>
-        <h1 className="text-3xl md:text-5xl font-bold mb-4">Ristorante Barinello</h1>
+        <h1 className="text-3xl md:text-5xl font-bold mb-4">Bird Restaurant</h1>
       </div>
     </div>
   )

@@ -71,7 +71,7 @@ export default function ChiSiamoPage() {
               Chi Siamo
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Il nostro team è composto da persone appassionate che rendono ogni esperienza al Ristorante Barinello unica e indimenticabile.
+              Il nostro team è composto da persone appassionate che rendono ogni esperienza al Bird Restaurant unica e indimenticabile.
             </p>
           </div>
 

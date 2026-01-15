@@ -19,7 +19,7 @@ const sunsetVideos: Video[] = [
     id: "i",
     src: "/video/i.mp4",
     title: "Tramonto sul mare",
-    description: "Lasciatevi incantare dai tramonti mozzafiato che ogni sera colorano il cielo sopra il mare di Terrasini. Un momento magico che rende ogni cena al Ristorante Barinello un'esperienza indimenticabile, dove la natura si fonde con l'eccellenza culinaria."
+    description: "Lasciatevi incantare dai tramonti mozzafiato che ogni sera colorano il cielo sopra il mare di Terrasini. Un momento magico che rende ogni cena al Bird Restaurant un'esperienza indimenticabile, dove la natura si fonde con l'eccellenza culinaria."
   },
   {
     id: "ii",

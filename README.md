@@ -1,6 +1,6 @@
-# Ristorante Barinello - Sito Web
+# Bird Restaurant - Sito Web
 
-Sito web per il Ristorante Barinello, specializzato in cucina di pesce a Terrasini, Sicilia.
+Sito web per il Bird Restaurant, specializzato in cucina di pesce a Terrasini, Sicilia.
 
 ## Tecnologie Utilizzate
 
@@ -99,5 +99,5 @@ Se usi Supabase, aggiungi queste variabili nelle impostazioni del progetto su Ve
 
 ## Licenza
 
-Proprietario: Ristorante Barinello
+Proprietario: Bird Restaurant
 

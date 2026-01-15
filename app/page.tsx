@@ -343,66 +343,20 @@ export default function Home() {
                   return (
                     <div key={video.id} className="space-y-8 md:space-y-12">
                       {/* Video */}
-                      <div
-                        className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-6 md:gap-8 items-center`}
-                      >
-                        {/* Video */}
-                        <div className="flex-1 w-full">
-                          <VideoPlayer video={video} isEven={isEven} />
-                        </div>
-                        
-                        {/* Description */}
-                        <div className="flex-1 w-full">
-                          <div className="h-full flex flex-col justify-center p-4 md:p-6 relative">
-                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                            <h3 
-                              className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-foreground tracking-tight"
-                              style={{ fontFamily: "var(--font-playfair), serif" }}
-                            >
-                              {video.title}
-                            </h3>
-                            <p 
-                              className="text-base md:text-xl text-muted-foreground leading-relaxed"
-                              style={{ fontFamily: "var(--font-cormorant), serif" }}
-                            >
-                              {video.description}
-                            </p>
-                          </div>
-                        </div>
+                      <div className="w-full">
+                        <VideoPlayer video={video} isEven={isEven} />
                       </div>
                       
                       {/* Immagine terrazza dopo il primo video */}
                       {index === 0 && (
-                        <div className="flex flex-row-reverse gap-3 md:gap-6 items-center">
-                          {/* Immagine */}
-                          <div className="flex-1 w-full">
-                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img 
-                                src="/dg.png" 
-                                alt="La nostra terrazza vista sui faraglioni"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          </div>
-                          
-                          {/* Descrizione */}
-                          <div className="flex-1 w-full">
-                            <div className="h-full flex flex-col justify-center p-3 md:p-5 relative">
-                              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                              <h3 
-                                className="text-lg md:text-2xl font-bold mb-2 md:mb-4 text-foreground tracking-tight"
-                                style={{ fontFamily: "var(--font-playfair), serif" }}
-                              >
-                                La nostra terrazza
-                              </h3>
-                              <p 
-                                className="text-xs md:text-base text-muted-foreground leading-relaxed"
-                                style={{ fontFamily: "var(--font-cormorant), serif" }}
-                              >
-                                La nostra terrazza si affaccia direttamente sui faraglioni, offrendo una vista mozzafiato sul mare cristallino di Terrasini. Un luogo unico dove potete godere dei nostri piatti di pesce freschissimo mentre ammirate lo spettacolo naturale che solo questa posizione privilegiata può offrire.
-                              </p>
-                            </div>
+                        <div className="w-full">
+                          <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img 
+                              src="/dg.png" 
+                              alt="La nostra terrazza vista sui faraglioni"
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </div>
                       )}
@@ -433,136 +387,44 @@ export default function Home() {
                   const isFirstVideo = video.id === "d" // Primo video è d.mp4
                   return (
                     <div key={video.id} className="space-y-6 md:space-y-8">
-                      {/* Video con descrizione */}
-                      <div
-                        className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-4 md:gap-6 items-center`}
-                      >
-                        {/* Video */}
-                        <div className="flex-1 w-full">
-                          <VideoPlayer video={video} isEven={isEven} />
-                        </div>
-                        
-                        {/* Description */}
-                        <div className="flex-1 w-full">
-                          <div className="h-full flex flex-col justify-center p-3 md:p-5 relative">
-                            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                            <h3 
-                              className="text-xl md:text-3xl font-bold mb-3 md:mb-5 text-foreground tracking-tight"
-                              style={{ fontFamily: "var(--font-playfair), serif" }}
-                            >
-                              {video.title}
-                            </h3>
-                            <p 
-                              className="text-sm md:text-lg text-muted-foreground leading-relaxed"
-                              style={{ fontFamily: "var(--font-cormorant), serif" }}
-                            >
-                              {video.description}
-                            </p>
-                          </div>
-                        </div>
+                      {/* Video */}
+                      <div className="w-full">
+                        <VideoPlayer video={video} isEven={isEven} />
                       </div>
                       
-                      {/* Immagine q.png dopo il primo video (d.mp4) */}
+                      {/* Immagini statiche dopo il primo video (d.mp4) */}
                       {isFirstVideo && (
                         <div className="space-y-6 md:space-y-8">
-                          <div className="flex flex-row gap-3 md:gap-6 items-center">
-                            {/* Immagine */}
-                            <div className="flex-1 w-full">
-                              <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img 
-                                  src="/q.png" 
-                                  alt="I nostri spaghetti alle cozze e vongole veraci"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </div>
-                            
-                            {/* Descrizione */}
-                            <div className="flex-1 w-full">
-                              <div className="h-full flex flex-col justify-center p-3 md:p-5 relative">
-                                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                                <h3 
-                                  className="text-lg md:text-2xl font-bold mb-2 md:mb-4 text-foreground tracking-tight"
-                                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                                >
-                                  I nostri spaghetti alle cozze e vongole veraci
-                                </h3>
-                                <p 
-                                  className="text-xs md:text-base text-muted-foreground leading-relaxed"
-                                  style={{ fontFamily: "var(--font-cormorant), serif" }}
-                                >
-                                  Un piatto che celebra la tradizione siciliana con cozze e vongole veraci freschissime, aglio, prezzemolo e un tocco di vino bianco. Gli spaghetti perfettamente al dente si sposano con il sapore autentico del mare.
-                                </p>
-                              </div>
+                          <div className="w-full">
+                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img 
+                                src="/q.png" 
+                                alt="I nostri spaghetti alle cozze e vongole veraci"
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                           </div>
                           
-                          {/* Immagine 4.png dopo q.png (alternata) */}
-                          <div className="flex flex-row-reverse gap-3 md:gap-6 items-center">
-                            {/* Immagine */}
-                            <div className="flex-1 w-full">
-                              <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img 
-                                  src="/4.png" 
-                                  alt="I nostri spaghetti al nero di seppia e ricchi di mare"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </div>
-                            
-                            {/* Descrizione */}
-                            <div className="flex-1 w-full">
-                              <div className="h-full flex flex-col justify-center p-3 md:p-5 relative">
-                                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                                <h3 
-                                  className="text-lg md:text-2xl font-bold mb-2 md:mb-4 text-foreground tracking-tight"
-                                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                                >
-                                  I nostri spaghetti al nero di seppia e ricchi di mare
-                                </h3>
-                                <p 
-                                  className="text-xs md:text-base text-muted-foreground leading-relaxed"
-                                  style={{ fontFamily: "var(--font-cormorant), serif" }}
-                                >
-                                  Un piatto dal sapore intenso e caratteristico, preparato con il nero di seppia freschissimo e arricchito con frutti di mare selezionati. Gli spaghetti perfettamente al dente si colorano del nero profondo della seppia, creando un&apos;esperienza culinaria unica che celebra i sapori autentici del nostro mare.
-                                </p>
-                              </div>
+                          <div className="w-full">
+                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img 
+                                src="/4.png" 
+                                alt="I nostri spaghetti al nero di seppia e ricchi di mare"
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                           </div>
                           
-                          {/* Immagine l.png dopo 4.png (alternata) */}
-                          <div className="flex flex-row gap-3 md:gap-6 items-center">
-                            {/* Immagine */}
-                            <div className="flex-1 w-full">
-                              <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img 
-                                  src="/l.png" 
-                                  alt="Le nostre linguine all'astice"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            </div>
-                            
-                            {/* Descrizione */}
-                            <div className="flex-1 w-full">
-                              <div className="h-full flex flex-col justify-center p-3 md:p-5 relative">
-                                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary/50 to-transparent opacity-50" />
-                                <h3 
-                                  className="text-lg md:text-2xl font-bold mb-2 md:mb-4 text-foreground tracking-tight"
-                                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                                >
-                                  Le nostre linguine all&apos;astice
-                                </h3>
-                                <p 
-                                  className="text-xs md:text-base text-muted-foreground leading-relaxed"
-                                  style={{ fontFamily: "var(--font-cormorant), serif" }}
-                                >
-                                  Linguine di grano duro con astice fresco appena pescato, pomodorini pachino e basilico siciliano. Un piatto di lusso che esalta la dolcezza dell&apos;astice e la ricchezza del mare, servito con eleganza e raffinatezza.
-                                </p>
-                              </div>
+                          <div className="w-full">
+                            <div className="relative w-full aspect-square md:aspect-[4/3] bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img 
+                                src="/l.png" 
+                                alt="Le nostre linguine all'astice"
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                           </div>
                         </div>

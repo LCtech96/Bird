@@ -17,7 +17,7 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: "Ristorante Barinello - Cucina di Pesce a Terrasini",
+  title: "Bird Restaurant - Cucina di Pesce a Terrasini",
   description: "Ristorante di pesce a Terrasini, Sicilia. Cucina tradizionale siciliana con ingredienti freschi del territorio.",
 }
 

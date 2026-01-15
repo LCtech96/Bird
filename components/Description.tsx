@@ -3,7 +3,7 @@ export function Description() {
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto text-center">
         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-          Nel cuore di Terrasini, affacciato sul mare cristallino della Sicilia, il Ristorante Barinello vi accoglie 
+          Nel cuore di Terrasini, affacciato sul mare cristallino della Sicilia, il Bird Restaurant vi accoglie 
           in un&apos;atmosfera elegante e raffinata. La nostra cucina di pesce celebra le tradizioni siciliane con 
           ingredienti freschissimi del territorio, selezionati ogni giorno dai nostri pescatori locali.
         </p>

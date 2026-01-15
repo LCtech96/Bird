@@ -22,7 +22,7 @@ const DEFAULT_TEAM_MEMBERS = [
     id: 3,
     image: "/tit.png",
     title: "Il Titolare",
-    description: "Cuore e anima del Ristorante Barinello, guida con passione e dedizione ogni aspetto della nostra cucina. Con anni di esperienza e un amore profondo per la tradizione siciliana, seleziona personalmente ogni ingrediente e supervisiona ogni piatto che esce dalla nostra cucina. La sua visione e il suo impegno rendono il Barinello un luogo dove tradizione e innovazione si incontrano per creare esperienze culinarie indimenticabili.",
+    description: "Cuore e anima del Bird Restaurant, guida con passione e dedizione ogni aspetto della nostra cucina. Con anni di esperienza e un amore profondo per la tradizione siciliana, seleziona personalmente ogni ingrediente e supervisiona ogni piatto che esce dalla nostra cucina. La sua visione e il suo impegno rendono il Bird Restaurant un luogo dove tradizione e innovazione si incontrano per creare esperienze culinarie indimenticabili.",
     layout: "left"
   }
 ]
