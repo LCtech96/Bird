@@ -437,29 +437,9 @@ export default function Home() {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img 
                               src={imageAfter.src} 
-                              alt={imageAfter.title || imageAfter.description}
+                              alt={imageAfter.title || imageAfter.description || "Immagine"}
                               className="w-full h-full object-cover"
                             />
-                            {(imageAfter.title || imageAfter.description) && (
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-4 md:p-6">
-                                {imageAfter.title && (
-                                  <h3 
-                                    className="text-xl md:text-2xl font-bold mb-2 text-white"
-                                    style={{ fontFamily: "var(--font-playfair), serif" }}
-                                  >
-                                    {imageAfter.title}
-                                  </h3>
-                                )}
-                                {imageAfter.description && (
-                                  <p 
-                                    className="text-sm md:text-base text-white/90"
-                                    style={{ fontFamily: "var(--font-cormorant), serif" }}
-                                  >
-                                    {imageAfter.description}
-                                  </p>
-                                )}
-                              </div>
-                            )}
                           </div>
                         </div>
                       )}
