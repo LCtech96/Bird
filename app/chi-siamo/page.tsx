@@ -87,13 +87,24 @@ export default function ChiSiamoPage() {
                 <div className="flex-1 w-full">
                   <div className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl">
                     {member.image ? (
-                      <Image
-                        src={member.image}
-                        alt={member.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
+                      member.image.startsWith("data:image") ? (
+                        // Se è base64, usa img normale
+                        <img
+                          src={member.image}
+                          alt={member.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        // Se è un percorso URL, usa Next.js Image
+                        <Image
+                          src={member.image}
+                          alt={member.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          unoptimized={member.image.startsWith("/")}
+                        />
+                      )
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
                         Nessuna immagine

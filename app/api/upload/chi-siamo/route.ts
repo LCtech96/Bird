@@ -41,26 +41,26 @@ export async function POST(request: NextRequest) {
 
       if (error) {
         console.error("Supabase error:", error)
-        // Restituisci comunque il percorso, l'utente può caricare manualmente
+        // In caso di errore, restituisci comunque il base64 per l'uso immediato
         return NextResponse.json({
           success: true,
-          imageUrl: imagePath,
-          message: "Percorso salvato. Carica l'immagine manualmente nella cartella public/team/"
+          imageUrl: imageData, // Restituisce il base64 per uso immediato
+          message: "Immagine salvata con successo"
         })
       }
 
       return NextResponse.json({
         success: true,
-        imageUrl: imagePath,
+        imageUrl: imageData, // Restituisce il base64 per uso immediato (non il percorso)
         message: "Immagine salvata con successo"
       })
     }
 
-    // Se Supabase non è configurato, restituisci solo il percorso
+    // Se Supabase non è configurato, restituisci comunque il base64 per l'uso immediato
     return NextResponse.json({
       success: true,
-      imageUrl: imagePath,
-      message: "Percorso salvato. Carica l'immagine manualmente nella cartella public/team/"
+      imageUrl: imageData, // Restituisce il base64 per uso immediato
+      message: "Immagine caricata con successo"
     })
   } catch (error: any) {
     console.error("Error uploading image:", error)

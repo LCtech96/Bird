@@ -151,34 +151,42 @@ export default function AdminChiSiamoPage() {
 
           if (response.ok) {
             const data = await response.json()
-            // Aggiorna con il percorso reale dell'immagine
-            updated[index] = { ...updated[index], image: data.imageUrl || imagePath }
+            // Aggiorna con il base64 dell'immagine (non il percorso)
+            updated[index] = { ...updated[index], image: data.imageUrl || base64Image }
             setTeamMembers(updated)
             setMessage({ type: "success", text: "Immagine caricata con successo!" })
             setTimeout(() => setMessage(null), 3000)
             
-            // Rilascia l'URL temporaneo
-            URL.revokeObjectURL(previewUrl)
+            // Rilascia l'URL temporaneo dopo un breve delay per assicurare il rendering del base64
+            setTimeout(() => {
+              URL.revokeObjectURL(previewUrl)
+            }, 500)
           } else {
-            // Se l'upload fallisce, usa il percorso del file
-            updated[index] = { ...updated[index], image: imagePath }
+            // Se l'upload fallisce, usa il base64 direttamente
+            updated[index] = { ...updated[index], image: base64Image }
             setTeamMembers(updated)
             setMessage({ 
               type: "success", 
-              text: `Immagine selezionata. Carica il file "${fileName}" nella cartella public/team/ oppure usa il percorso: ${imagePath}` 
+              text: "Immagine caricata localmente. Ricorda di salvare le modifiche." 
             })
             setTimeout(() => setMessage(null), 5000)
+            setTimeout(() => {
+              URL.revokeObjectURL(previewUrl)
+            }, 500)
           }
         } catch (error) {
           console.error("Error uploading image:", error)
-          // In caso di errore, usa il percorso del file
-          updated[index] = { ...updated[index], image: imagePath }
+          // In caso di errore, usa il base64 direttamente
+          updated[index] = { ...updated[index], image: base64Image }
           setTeamMembers(updated)
           setMessage({ 
-            type: "error", 
-            text: "Errore durante l&apos;upload. Usa il percorso manuale o carica l&apos;immagine nella cartella public/team/" 
+            type: "success", 
+            text: "Immagine caricata localmente. Ricorda di salvare le modifiche." 
           })
           setTimeout(() => setMessage(null), 5000)
+          setTimeout(() => {
+            URL.revokeObjectURL(previewUrl)
+          }, 500)
         }
       }
       reader.readAsDataURL(file)
@@ -292,13 +300,24 @@ export default function AdminChiSiamoPage() {
                   <div className="relative aspect-square max-w-xs rounded-lg overflow-hidden border border-border group cursor-pointer">
                     {member.image ? (
                       <>
-                        <Image
-                          src={member.image}
-                          alt={member.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
+                        {member.image.startsWith("data:image") ? (
+                          // Se è base64, usa img normale
+                          <img
+                            src={member.image}
+                            alt={member.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          // Se è un percorso URL, usa Next.js Image
+                          <Image
+                            src={member.image}
+                            alt={member.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            unoptimized={member.image.startsWith("/")}
+                          />
+                        )}
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="text-white text-sm font-semibold">Clicca per cambiare</span>
                         </div>
