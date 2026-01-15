@@ -192,14 +192,12 @@ export default function AdminChiSiamoPage() {
       reader.readAsDataURL(file)
     } catch (error) {
       console.error("Error processing image:", error)
-      // In caso di errore, usa il percorso del file
-      updated[index] = { ...updated[index], image: imagePath }
-      setTeamMembers(updated)
       setMessage({ 
         type: "error", 
-        text: "Errore durante l&apos;elaborazione. Usa il percorso manuale." 
+        text: "Errore durante l&apos;elaborazione dell&apos;immagine. Riprova." 
       })
       setTimeout(() => setMessage(null), 5000)
+      // Mantieni il blob URL temporaneo invece di usare un percorso hardcoded
     }
   }
 

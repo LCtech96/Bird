@@ -41,11 +41,38 @@ export async function GET() {
       if (!error && data && data.value) {
         let teamMembers = data.value as Array<{ id: number; image?: string; [key: string]: any }>
         
-        // Per ogni membro, se l'immagine è un percorso hardcoded (non base64), prova a caricare il base64 dalla chiave separata
+        // Per ogni membro, pulisci i percorsi hardcoded e carica base64 se disponibile
         teamMembers = await Promise.all(
           teamMembers.map(async (member) => {
-            // Se l'immagine è un percorso hardcoded (inizia con /) o è vuota, prova a caricare il base64
-            if (!member.image || (member.image.startsWith("/") && !member.image.startsWith("/api"))) {
+            // Se l'immagine è un percorso hardcoded (inizia con / ma non è base64) o percorso team che non esiste, pulisci
+            if (member.image) {
+              // Se è base64 (data:image), mantienilo
+              if (member.image.startsWith("data:image")) {
+                return member
+              }
+              // Se è un percorso hardcoded (inizia con /) o percorso team, prova a caricare base64 o pulisci
+              if (member.image.startsWith("/")) {
+                try {
+                  // Prova a caricare il base64 dalla chiave separata
+                  const { data: imageData } = await supabaseServer
+                    .from("admin_data")
+                    .select("value")
+                    .eq("key", `chi_siamo_image_${member.id}`)
+                    .single()
+
+                  if (imageData?.value?.imageData) {
+                    return { ...member, image: imageData.value.imageData }
+                  }
+                } catch (err) {
+                  // Se non trova l'immagine base64, continua a pulire
+                  console.log(`No base64 image found for member ${member.id}, cleaning hardcoded path`)
+                }
+                // Rimuovi il percorso hardcoded (non esiste nel server)
+                return { ...member, image: "" }
+              }
+            }
+            // Se l'immagine è vuota, prova comunque a caricare base64 se esiste
+            if (!member.image) {
               try {
                 const { data: imageData } = await supabaseServer
                   .from("admin_data")
@@ -57,11 +84,8 @@ export async function GET() {
                   return { ...member, image: imageData.value.imageData }
                 }
               } catch (err) {
-                // Se non trova l'immagine base64, usa stringa vuota invece del percorso hardcoded
-                console.log(`No base64 image found for member ${member.id}`)
+                // Nessun base64 disponibile, mantieni vuoto
               }
-              // Se non trova il base64, rimuovi il percorso hardcoded
-              return { ...member, image: "" }
             }
             return member
           })
@@ -79,12 +103,21 @@ export async function GET() {
   }
 }
 
-// POST - Salva i membri del team
+    // POST - Salva i membri del team
 export async function POST(request: NextRequest) {
   try {
     await requireAuth()
     
-    const teamMembers = await request.json()
+    let teamMembers = await request.json()
+    
+    // Pulisci i percorsi hardcoded prima di salvare - mantieni solo base64 o stringa vuota
+    teamMembers = (Array.isArray(teamMembers) ? teamMembers : []).map((member: any) => {
+      // Se l'immagine è un percorso hardcoded (inizia con / ma non è base64), rimuovilo
+      if (member.image && member.image.startsWith("/") && !member.image.startsWith("data:image")) {
+        return { ...member, image: "" }
+      }
+      return member
+    })
     
     // Salva su Supabase
     if (supabaseServer) {
