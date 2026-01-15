@@ -29,19 +29,7 @@ export default function RootLayout({
   return (
     <html lang="it" suppressHydrationWarning>
       <body className={`${inter.className} ${playfair.variable} ${cormorant.variable} relative`}>
-        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-          <img 
-            src="/sfondo.png"
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              filter: "blur(8px)",
-              opacity: 0.5,
-              transform: "scale(1.1)"
-            }}
-          />
-          <div className="absolute inset-0 bg-background/40" />
-        </div>
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-gradient-to-b from-muted/20 to-background" />
         <div className="relative z-10 min-h-screen">
           <ThemeProvider
             attribute="class"

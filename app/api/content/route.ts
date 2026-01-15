@@ -62,17 +62,7 @@ const DEFAULT_VIDEOS = [
   }
 ]
 
-// Immagini modificabili: k.png, kj.png, kkk.png, cop.png, ddd.png, dfg.png, 3.png, 9.png
-const DEFAULT_EDITABLE_IMAGES = [
-  { id: "k", src: "/k.png", title: "", description: "", visible: true },
-  { id: "kj", src: "/kj.png", title: "", description: "", visible: true },
-  { id: "kkk", src: "/kkk.png", title: "", description: "", visible: true },
-  { id: "cop", src: "/cop.png", title: "", description: "", visible: true },
-  { id: "ddd", src: "/ddd.png", title: "", description: "", visible: true },
-  { id: "dfg", src: "/dfg.png", title: "", description: "", visible: true },
-  { id: "3", src: "/3.png", title: "", description: "", visible: true },
-  { id: "9", src: "/9.png", title: "", description: "", visible: true }
-]
+const DEFAULT_EDITABLE_IMAGES: Array<{ id: string; src: string; title: string; description: string; visible: boolean }> = []
 
 const DEFAULT_HOME_IMAGES: Array<{ id: string; src: string; title: string; description: string; visible: boolean }> = []
 
@@ -81,7 +71,7 @@ const DEFAULT_CONTENT = {
   profileImage: "",
   videos: DEFAULT_VIDEOS,
   images: [],
-  editableImages: DEFAULT_EDITABLE_IMAGES,
+  editableImages: [],
   homeImages: DEFAULT_HOME_IMAGES
 }
 

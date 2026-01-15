@@ -330,8 +330,14 @@ export default function AdminContentPage() {
           <div className="bg-card border border-border rounded-xl p-6">
             <h2 className="text-xl font-bold mb-4">Immagine di Copertina</h2>
             <div className="flex gap-4">
-              <div className="relative w-48 h-32 bg-muted rounded-lg overflow-hidden">
-                <img src={content.coverImage} alt="Cover" className="w-full h-full object-cover" />
+              <label className="relative w-48 h-32 bg-muted rounded-lg overflow-hidden cursor-pointer group">
+                {content.coverImage ? (
+                  <img src={content.coverImage} alt="Cover" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Upload className="w-8 h-8" />
+                  </div>
+                )}
                 <input
                   type="file"
                   accept="image/*"
@@ -339,21 +345,21 @@ export default function AdminContentPage() {
                     const file = e.target.files?.[0]
                     if (file) handleImageUpload("cover", file)
                   }}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  className="hidden"
+                  id="cover-image-input"
                 />
-                <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                   <Upload className="w-6 h-6 text-white" />
                 </div>
-              </div>
+              </label>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground mb-2">Clicca sull&apos;immagine per caricare una nuova</p>
-                <input
-                  type="text"
-                  value={content.coverImage}
-                  onChange={(e) => setContent({ ...content, coverImage: e.target.value })}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-                  placeholder="Carica un'immagine di copertina"
-                />
+                <label htmlFor="cover-image-input" className="block">
+                  <span className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer inline-block">
+                    <Upload className="w-4 h-4" />
+                    <span>Carica Immagine</span>
+                  </span>
+                </label>
               </div>
             </div>
           </div>
@@ -362,8 +368,14 @@ export default function AdminContentPage() {
           <div className="bg-card border border-border rounded-xl p-6">
             <h2 className="text-xl font-bold mb-4">Immagine Profilo</h2>
             <div className="flex gap-4">
-              <div className="relative w-32 h-32 bg-muted rounded-full overflow-hidden">
-                <img src={content.profileImage} alt="Profile" className="w-full h-full object-cover" />
+              <label className="relative w-32 h-32 bg-muted rounded-full overflow-hidden cursor-pointer group">
+                {content.profileImage ? (
+                  <img src={content.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Upload className="w-8 h-8" />
+                  </div>
+                )}
                 <input
                   type="file"
                   accept="image/*"
@@ -371,21 +383,21 @@ export default function AdminContentPage() {
                     const file = e.target.files?.[0]
                     if (file) handleImageUpload("profile", file)
                   }}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  className="hidden"
+                  id="profile-image-input"
                 />
-                <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                   <Upload className="w-6 h-6 text-white" />
                 </div>
-              </div>
+              </label>
               <div className="flex-1">
                 <p className="text-sm text-muted-foreground mb-2">Clicca sull&apos;immagine per caricare una nuova</p>
-                <input
-                  type="text"
-                  value={content.profileImage}
-                  onChange={(e) => setContent({ ...content, profileImage: e.target.value })}
-                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-                  placeholder="Carica un'immagine profilo"
-                />
+                <label htmlFor="profile-image-input" className="block">
+                  <span className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer inline-block">
+                    <Upload className="w-4 h-4" />
+                    <span>Carica Immagine</span>
+                  </span>
+                </label>
               </div>
             </div>
           </div>
@@ -414,13 +426,80 @@ export default function AdminContentPage() {
                       {editingItem?.type === "video" && editingItem.index === index ? (
                         <div className="space-y-3">
                           <div>
-                            <label className="text-sm font-semibold mb-1 block">Percorso Video</label>
+                            <label className="text-sm font-semibold mb-1 block">Carica Video</label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="file"
+                                accept="video/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) {
+                                    const reader = new FileReader()
+                                    reader.onloadend = async () => {
+                                      const base64Video = reader.result as string
+                                      try {
+                                        setMessage("Caricamento video...")
+                                        const response = await fetch("/api/upload/video", {
+                                          method: "POST",
+                                          headers: { "Content-Type": "application/json" },
+                                          body: JSON.stringify({
+                                            fileName: file.name,
+                                            videoData: base64Video,
+                                            videoId: video.id
+                                          })
+                                        })
+                                        if (response.ok) {
+                                          const data = await response.json()
+                                          updateVideo(index, "src", data.videoUrl)
+                                          setMessage("Video caricato con successo!")
+                                          setTimeout(() => setMessage(""), 3000)
+                                        } else {
+                                          setMessage("Errore durante il caricamento del video")
+                                          setTimeout(() => setMessage(""), 3000)
+                                        }
+                                      } catch (error) {
+                                        console.error("Error uploading video:", error)
+                                        setMessage("Errore durante il caricamento del video")
+                                        setTimeout(() => setMessage(""), 3000)
+                                      }
+                                    }
+                                    reader.onerror = () => {
+                                      setMessage("Errore durante la lettura del file")
+                                      setTimeout(() => setMessage(""), 3000)
+                                    }
+                                    reader.readAsDataURL(file)
+                                  }
+                                }}
+                                className="hidden"
+                                id={`video-upload-${index}`}
+                              />
+                              <label
+                                htmlFor={`video-upload-${index}`}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer"
+                              >
+                                <Upload className="w-4 h-4" />
+                                <span>Carica Video</span>
+                              </label>
+                              {video.src && (
+                                <span className="text-xs text-muted-foreground">
+                                  {video.src.startsWith("data:video") ? "Video caricato" : video.src}
+                                </span>
+                              )}
+                            </div>
+                            {video.src && video.src.startsWith("data:video") && (
+                              <div className="mt-2">
+                                <video src={video.src} className="max-w-xs rounded-lg" controls />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <label className="text-sm font-semibold mb-1 block">Percorso Video (opzionale, se hai già un URL)</label>
                             <input
                               type="text"
-                              value={video.src}
+                              value={video.src?.startsWith("data:") ? "" : video.src}
                               onChange={(e) => updateVideo(index, "src", e.target.value)}
                               className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-                              placeholder="/video/nome-video.mp4"
+                              placeholder="/video/nome-video.mp4 o URL"
                             />
                           </div>
                           <div>
@@ -504,154 +583,6 @@ export default function AdminContentPage() {
               ))}
               {content.videos.length === 0 && (
                 <p className="text-center text-muted-foreground py-8">Nessun video presente. Clicca su &quot;Aggiungi Video&quot; per iniziare.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Immagini Modificabili - Solo le 8 immagini specificate */}
-          <div className="bg-card border border-border rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold">Immagini Modificabili</h2>
-                <p className="text-sm text-muted-foreground mt-1">Gestisci le immagini: k.png, kj.png, kkk.png, cop.png, ddd.png, dfg.png, 3.png, 9.png</p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              {(content.editableImages || []).map((image, index) => (
-                <div
-                  key={image.id || index}
-                  className={`p-4 border border-border rounded-lg ${image.visible === false ? "opacity-50" : ""}`}
-                >
-                  <div className="flex items-start gap-4">
-                    {image.src && (
-                      <div className="relative w-32 h-32 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                        <img src={image.src} alt={image.title || image.id} className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">{image.src || image.id}</span>
-                        {image.visible === false && (
-                          <span className="text-xs bg-muted px-2 py-1 rounded">Nascosta</span>
-                        )}
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold mb-1 block">Immagine</label>
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0]
-                              if (file) {
-                                handleFileUpload(file, (base64) => {
-                                  const newImages = [...(content.editableImages || [])]
-                                  newImages[index] = { ...newImages[index], src: base64 }
-                                  setContent({ ...content, editableImages: newImages })
-                                })
-                              }
-                            }}
-                            className="hidden"
-                            id={`editable-image-${index}`}
-                          />
-                          <label
-                            htmlFor={`editable-image-${index}`}
-                            className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded text-sm cursor-pointer hover:bg-primary/90 transition-colors"
-                          >
-                            <Upload className="w-4 h-4" />
-                            <span>Upload Foto</span>
-                          </label>
-                          {image.src && (
-                            <span className="text-xs text-muted-foreground">
-                              {image.src.startsWith("data:image") ? "Immagine caricata" : image.src}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold mb-1 block">Titolo</label>
-                        <input
-                          type="text"
-                          value={image.title}
-                          onChange={(e) => {
-                            const newImages = [...(content.editableImages || [])]
-                            newImages[index] = { ...newImages[index], title: e.target.value }
-                            setContent({ ...content, editableImages: newImages })
-                          }}
-                          className="w-full px-2 py-1 bg-background border border-border rounded text-sm"
-                          placeholder="Titolo"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold mb-1 block">Descrizione</label>
-                        <textarea
-                          value={image.description}
-                          onChange={(e) => {
-                            const newImages = [...(content.editableImages || [])]
-                            newImages[index] = { ...newImages[index], description: e.target.value }
-                            setContent({ ...content, editableImages: newImages })
-                          }}
-                          className="w-full px-2 py-1 bg-background border border-border rounded text-sm min-h-[60px]"
-                          placeholder="Descrizione"
-                        />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => {
-                            const newImages = [...(content.editableImages || [])]
-                            const currentVisible = newImages[index].visible !== false
-                            newImages[index] = { ...newImages[index], visible: !currentVisible }
-                            setContent({ ...content, editableImages: newImages })
-                          }}
-                          className="p-1.5 rounded hover:bg-accent transition-colors"
-                          title={image.visible !== false ? "Nascondi" : "Mostra"}
-                        >
-                          {image.visible !== false ? (
-                            <Eye className="w-4 h-4" />
-                          ) : (
-                            <EyeOff className="w-4 h-4" />
-                          )}
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (confirm("Sei sicuro di voler eliminare questa immagine?")) {
-                              const newImages = (content.editableImages || []).filter((_, i) => i !== index)
-                              const updatedContent = { ...content, editableImages: newImages }
-                              setContent(updatedContent)
-                              
-                              // Salva automaticamente dopo l'eliminazione
-                              try {
-                                const response = await fetch("/api/content", {
-                                  method: "POST",
-                                  headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify(updatedContent),
-                                })
-                                if (response.ok) {
-                                  setMessage("Immagine eliminata con successo")
-                                  setTimeout(() => setMessage(""), 2000)
-                                } else {
-                                  setMessage("Errore nell'eliminazione dell'immagine")
-                                  setTimeout(() => setMessage(""), 3000)
-                                }
-                              } catch (error) {
-                                console.error("Error deleting image:", error)
-                                setMessage("Errore nell'eliminazione dell'immagine")
-                                setTimeout(() => setMessage(""), 3000)
-                              }
-                            }
-                          }}
-                          className="p-1.5 rounded hover:bg-destructive/20 text-destructive transition-colors"
-                          title="Elimina"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {(!content.editableImages || content.editableImages.length === 0) && (
-                <p className="text-center text-muted-foreground py-4">Nessuna immagine presente.</p>
               )}
             </div>
           </div>
