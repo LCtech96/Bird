@@ -31,8 +31,9 @@ const DEFAULT_TEAM_MEMBERS = [
 export async function GET() {
   try {
     // Prova a caricare da Supabase
-    if (supabaseServer) {
-      const { data, error } = await supabaseServer
+    const supabase = supabaseServer
+    if (supabase) {
+      const { data, error } = await supabase
         .from("admin_data")
         .select("value")
         .eq("key", "chi_siamo")
@@ -54,7 +55,7 @@ export async function GET() {
               if (member.image.startsWith("/")) {
                 try {
                   // Prova a caricare il base64 dalla chiave separata
-                  const { data: imageData } = await supabaseServer
+                  const { data: imageData } = await supabase
                     .from("admin_data")
                     .select("value")
                     .eq("key", `chi_siamo_image_${member.id}`)
@@ -74,7 +75,7 @@ export async function GET() {
             // Se l'immagine è vuota, prova comunque a caricare base64 se esiste
             if (!member.image) {
               try {
-                const { data: imageData } = await supabaseServer
+                const { data: imageData } = await supabase
                   .from("admin_data")
                   .select("value")
                   .eq("key", `chi_siamo_image_${member.id}`)
