@@ -1,4 +1,5 @@
 // Dati di default del menu - condivisi tra pagina asporto e admin
+// Menu aggiornato con solo i piatti più recenti
 
 export interface Dish {
   name: string
@@ -15,413 +16,282 @@ export interface Category {
 
 export const defaultMenuCategories: Category[] = [
   {
-    title: "Antipasti di Mare",
+    title: "Piatto del giorno",
     dishes: [
-      { name: "Polipetti Murati", description: "Polipetti marinati con olio, limone e prezzemolo", price: "€16.00", visible: true },
-      { name: "Ostrica", description: "Ostriche freschissime del giorno", price: "€4.00", visible: true },
-      { name: "Insalata di Mare", description: "Polpo, Calamari, Cozze, Vongole, Carote, Sedano", price: "€15.00", visible: true },
-      { name: "Caponata di Pesce Spada", description: "Pesce spada, Melanzane, Sedano, Olive, Capperi", price: "€14.00", visible: true },
-      { name: "Cocktail di Gamberi", description: "Gamberi, Lattuga, Salsa cocktail", price: "€14.00", visible: true },
-      { name: "Gamberi Marinati", description: "Gamberi, Olio, Limone", price: "€14.00", visible: true },
-      { name: "Pepata di Cozze", description: "Cozze fresche con pepe nero e vino bianco", price: "€12.00", visible: true },
-      { name: "Plateau Frutti di Mare (per 2 persone)", description: "Ostriche, Vongole, Scampi, Sashimi di Salmone, Pesce del Giorno, Caviale 10 gr", price: "€55.00", visible: true },
-      { name: "Degustazione Barinello", description: "Selezione speciale del nostro chef", price: "€20.00", visible: true },
-      { name: "Souté di Vongole", description: "Vongole fresche in padella con aglio e prezzemolo", price: "€18.00", visible: true },
-      { name: "Antipasto di Mare", description: "Selezione di crudi, gamberi, polpo e cozze", price: "€18.00", visible: true },
-      { name: "Carpaccio di Pesce Spada", description: "Pesce spada fresco con olio extravergine e limone", price: "€15.00", visible: true },
-      { name: "Insalata di Polpo", description: "Polpo bollito con patate, olive e prezzemolo", price: "€12.00", visible: true },
-      { name: "Cozze alla Marinara", description: "Cozze fresche con pomodoro, aglio e prezzemolo", price: "€10.00", visible: true },
-      { name: "Gamberi in Guazzetto", description: "Gamberi freschi in salsa di pomodoro e vino bianco", price: "€14.00", visible: true }
+      { name: "Per il piatto del giorno chiedere al maître di sala", description: "For the dish of the day ask the maître hall", price: "", visible: true }
     ]
   },
   {
-    title: "Antipasti di Carne",
+    title: "Spritz",
     dishes: [
-      { name: "Songino, Crudo e Burrata", description: "Songino fresco, prosciutto crudo e burrata cremosa", price: "€12.00", visible: true },
-      { name: "Bruschetta Pomodoro", description: "Pane tostato con pomodoro fresco, aglio e basilico", price: "€7.00", visible: true },
-      { name: "Misto Caldo", description: "Patatine, Panelle, Crocché", price: "€8.00", visible: true },
-      { name: "Tagliere Salumi e Formaggi", description: "Selezione di salumi e formaggi siciliani", price: "€14.00", visible: true }
+      { name: "Aperol Spritz", description: "Aperol, Prosecco, soda", price: "€ 8,00", visible: true },
+      { name: "Campari Spritz", description: "Campari, Prosecco, soda", price: "€ 8,00", visible: true },
+      { name: "Hugo Spritz", description: "Prosecco, St. Germain, soda", price: "€ 9,00", visible: true },
+      { name: "Italicus Spritz", description: "Prosecco, Italicus Bergomotto", price: "€ 9,00", visible: true },
+      { name: "Sarti Spritz", description: "Sarti, Prosecco, soda", price: "€ 9,00", visible: true }
     ]
   },
   {
-    title: "Primi Piatti di Mare",
+    title: "Aperitivi",
     dishes: [
-      { name: "Tagliolino Ricci e Gambero", description: "Tagliolino fresco con ricci di mare e gamberi", price: "€26.00", visible: true },
-      { name: "Spaghetti con Ricci", description: "Spaghetti con ricci di mare freschissimi", price: "€30.00", visible: true },
-      { name: "Tagliolino con Gambero", description: "Gambero, Pomodorino, Granello di pistacchio, Lime", price: "€20.00", visible: true },
-      { name: "Ravioli di Cernia", description: "Cozze, Vongole, Gambero, Pomodorino", price: "€22.00", visible: true },
-      { name: "Spaghetti Cozze e Vongole", description: "Spaghetti con cozze e vongole fresche", price: "€18.00", visible: true },
-      { name: "Farfalle al Salmone", description: "Farfalle con salmone fresco e panna", price: "€15.00", visible: true },
-      { name: "Tagliolino Gambero e Vongole", description: "Tagliolino, Gambero, Vongole e pistacchio", price: "€22.00", visible: true },
-      { name: "Calamarata", description: "Polpetti, Calamari, Pomodorini", price: "€20.00", visible: true },
-      { name: "Spaghetti con Vongole", description: "Spaghetti con vongole veraci, aglio, prezzemolo e vino bianco", price: "€18.00", visible: true },
-      { name: "Spaghetti Cozze", description: "Cozze, Pomodorini", price: "€16.00", visible: true },
-      { name: "Spaghetti con Ragù di Polpo", description: "Spaghetti con ragù di polpo e pomodoro", price: "€18.00", visible: true },
-      { name: "Linguine all'Astice", description: "Linguine con astice fresco, pomodorini e basilico", price: "€22.00", visible: true },
-      { name: "Risotto ai Frutti di Mare", description: "Risotto cremoso con frutti di mare freschi", price: "€18.00", visible: true },
-      { name: "Pasta con Sarde", description: "Pasta tradizionale siciliana con sarde, finocchietto e pinoli", price: "€14.00", visible: true },
-      { name: "Bucatini alle Cicale", description: "Bucatini con cicale di mare, pomodorini e prezzemolo", price: "€19.00", visible: true }
+      { name: "Sambitter", description: "Bitter analcolico", price: "€ 5,00", visible: true },
+      { name: "Martini", description: "Bianco-Rosso-Dry", price: "€ 6,00", visible: true },
+      { name: "Americano", description: "Bitter Campari, Martini Rosso", price: "€ 7,00", visible: true },
+      { name: "Negroni", description: "Bitter Campari, Martini Rosso, Gin", price: "€ 7,00", visible: true },
+      { name: "Cocktail Martini", description: "Gin, Martini dry", price: "€ 8,00", visible: true },
+      { name: "Gin Tonic", description: "Gin, Acqua Tonica", price: "€ 7,00", visible: true },
+      { name: "Gin Lemon", description: "Gin, Lemonsoda", price: "€ 7,00", visible: true },
+      { name: "Vodka Tonic", description: "Vodka, Acqua tonica", price: "€ 7,00", visible: true },
+      { name: "Cuba Libre", description: "Rum, CocaCola, Limone", price: "€ 7,00", visible: true },
+      { name: "Ricard-Pernod", description: "Ricard-Pernod, Acqua", price: "€ 6,00", visible: true }
     ]
   },
   {
-    title: "Primi Piatti di Carne",
+    title: "Antipasti di pesce",
     dishes: [
-      { name: "Spaghetti alla Norma", description: "Salsa di pomodoro, Melanzane fritte, Ricotta salata", price: "€12.00", visible: true },
-      { name: "Spaghetti alla Carbonara", description: "Guanciale, Uova, Pecorino, Pepe", price: "€14.00", visible: true },
-      { name: "Paccheri Crema di Funghi, Noci e Guanciale", description: "Paccheri con crema di funghi, noci e guanciale croccante", price: "€15.00", visible: true }
+      { name: "Cozze scoppiate", description: "Cozze", price: "€ 12,00", visible: true },
+      { name: "Zuppa di cozze", description: "Cozze, aglio, olio d'oliva, peperoncino, salsa, prezzemolo", price: "€ 12,00", visible: true },
+      { name: "Cocktail di gamberi*", description: "Gamberi, lattuga, salsa rosa", price: "€ 15,00", visible: true },
+      { name: "Insalata di mare*", description: "Polpo, cozze, gamberi*, calamaro o totano, prezzemolo, olio, limone", price: "€ 15,00", visible: true },
+      { name: "Delizia mediterranea", description: "Insalata di mare, salmone, cocktail di gamberi, marlin affumicato, prezzemolo", price: "€ 18,00", visible: true },
+      { name: "Gamberi marinati* (8 pz.)", description: "Gamberi rossi, limone, olio d'oliva, peperoncino, prezzemolo", price: "€ 20,00", visible: true },
+      { name: "Ostriche (cad.)", description: "Oyster", price: "€ 4,00", visible: true }
     ]
   },
   {
-    title: "Secondi Piatti di Mare",
+    title: "Antipasti di carne",
     dishes: [
-      { name: "Polpo Grill con Purea di Patate", description: "Polpo grigliato con purea di patate cremosa", price: "€15.00", visible: true },
-      { name: "Frittura di Cappuccetti", description: "Frittura di piccoli pesci freschi", price: "€18.00", visible: true },
-      { name: "Pesce Spada Grigliato", description: "Trancio di pesce spada fresco grigliato", price: "€16.00", visible: true },
-      { name: "Calamaro Grigliato", description: "Calamaro fresco grigliato con limone", price: "€16.00", visible: true },
-      { name: "Grigliata Mista di Pesce (per 2 persone)", description: "Pesce spada, Calamaro grigliato, 2 p. Gamberi", price: "€35.00", visible: true },
-      { name: "Frittura di Pesce", description: "Calamaro, Gambero, Latterino", price: "€18.00", visible: true },
-      { name: "Gamberi Grill", description: "Gamberi", price: "€16.00", visible: true },
-      { name: "Branzino al Sale", description: "Branzino intero cotto al sale grosso con contorno", price: "€22.00", visible: true },
-      { name: "Orata al Forno", description: "Orata fresca al forno con patate e pomodorini", price: "€20.00", visible: true },
-      { name: "Calamari Ripieni", description: "Calamari ripieni con pangrattato, aglio, prezzemolo e uova", price: "€16.00", visible: true },
-      { name: "Tonno alla Siciliana", description: "Trancio di tonno fresco con cipolla, capperi e olive", price: "€23.00", visible: true }
+      { name: "Bruschette al pomodoro", description: "Pane tostato, pomodoro, aglio, olio d'oliva, basilico", price: "€ 6,00", visible: true },
+      { name: "Misto Caldo Fritto", description: "Patatine, panelle, arancinetta, crocchette di patate", price: "€ 6,00", visible: true },
+      { name: "Patate Fritte*", description: "Patate", price: "€ 4,00", visible: true },
+      { name: "Caprese", description: "Prosciutto crudo, mozzarella di bufala, pomodorini, basilico, olio d'oliva", price: "€ 12,00", visible: true },
+      { name: "Carpaccio di bresaola", description: "Bresaola, rucola, scaglie di grana, olio d'oliva, limone", price: "€ 11,00", visible: true },
+      { name: "Tartare di filetto", description: "Filetto tritato, rucola, cipolla rossa, frutto del cappero, glassa di aceto balsamico, olio d'oliva, limone", price: "€ 20,00", visible: true }
     ]
   },
   {
-    title: "Secondi Piatti di Carne",
+    title: "Primi",
     dishes: [
-      { name: "Fetta di Arrosto Panato", description: "Fetta di arrosto panato e croccante", price: "€12.00", visible: true },
-      { name: "Tomahawk", description: "Bistecca Tomahawk di prima qualità", price: "€5.00", visible: true },
-      { name: "Angus", description: "Bistecca Angus (per etto)", price: "€9.00", visible: true },
-      { name: "Grigliata Mista", description: "Grigliata mista di carni", price: "€20.00", visible: true },
-      { name: "Stinco di Maiale con Patate al Forno", description: "Stinco di maiale con patate al forno", price: "€18.00", visible: true },
-      { name: "Pollo Grigliato o Panato", description: "Pollo grigliato o panato a scelta", price: "€10.00", visible: true }
+      { name: "Spaghetti alle vongole", description: "Vongole, aglio, olio d'oliva, peperoncino, vino bianco, prezzemolo", price: "€ 22,00", visible: true },
+      { name: "Spaghetti allo scoglio", description: "Cozze, vongole, gamberi*, aglio, olio d'oliva, peperoncino, vino bianco, prezzemolo", price: "€ 16,00", visible: true },
+      { name: "Farfalle al salmone", description: "Salmone, salsa di pomodoro, panna, burro, cipolla, brandy", price: "€ 12,00", visible: true },
+      { name: "Risotto alla marinara", description: "Cozze, vongole, gamberi*, aglio, olio d'oliva, vino bianco, salsa di pomodoro, prezzemolo", price: "€ 16,00", visible: true },
+      { name: "Risotto al gambero con crema di zucca", description: "Gamberi*, crema di zucca, cipolla, panna, olio d'oliva, pepe", price: "€ 15,00", visible: true },
+      { name: "Pennette Bird", description: "Gamberi*, pesto genovese, rucola, zucchine, salsa di pomodoro, panna, aglio, olio d'oliva, prezzemolo", price: "€ 15,00", visible: true },
+      { name: "Pennette alla francescana", description: "Ragù di carne, prosciutto cotto, funghi freschi, panna, olio d'oliva, prezzemolo", price: "€ 13,00", visible: true },
+      { name: "Spaghetti alla carbonara", description: "Pancetta, tuorlo d'uovo, burro", price: "€ 14,00", visible: true }
+    ]
+  },
+  {
+    title: "Secondi di pesce",
+    dishes: [
+      { name: "Pesce fresco", description: "Prezzo al Kg.", price: "€ 60,00 / Kg", visible: true },
+      { name: "Pesce fresco in umido", description: "Prezzo al Kg.", price: "€ 60,00 / Kg", visible: true },
+      { name: "Frittura mista fresca", description: "Prezzo al Kg.", price: "€ 50,00 / Kg", visible: true },
+      { name: "Totano fresco alla griglia", description: "Prezzo al Kg.", price: "€ 45,00 / Kg", visible: true },
+      { name: "Totano fresco fritto", description: "Prezzo al Kg.", price: "€ 45,00 / Kg", visible: true },
+      { name: "Calamaro* alla griglia", description: "Grilled squid", price: "€ 18,00", visible: true },
+      { name: "Frittura mista*", description: "Calamari, gamberi", price: "€ 20,00", visible: true },
+      { name: "Frittura di calamaretti*", description: "Fried small squid", price: "€ 13,00", visible: true },
+      { name: "Pesce spada alla griglia*", description: "Prezzo al Kg.", price: "€ 45,00 / Kg", visible: true },
+      { name: "Gamberoni alla griglia*", description: "Grilled prawns", price: "€ 35,00", visible: true },
+      { name: "Grigliata mista di pesce*", description: "(Pesce spada, calamaro, gamberoni 2 pz.)", price: "€ 25,00", visible: true }
+    ]
+  },
+  {
+    title: "Secondi di carne",
+    dishes: [
+      { name: "Bistecca alla griglia", description: "Prezzo al Kg.", price: "€ 45,00 / Kg", visible: true },
+      { name: "Tagliata di Angus Irlandese con rucola e grana", description: "Prezzo al Kg.", price: "€ 50,00 / Kg", visible: true },
+      { name: "Filetto alla griglia", description: "Prezzo al Kg.", price: "€ 70,00 / Kg", visible: true },
+      { name: "Grigliata mista di carne", description: "Salsiccia, involtini, coscia di pollo, puntine di maiale", price: "€ 18,00", visible: true },
+      { name: "Involtini di carne", description: "Prosciutto cotto, formaggio, pomodoro, mollica", price: "€ 12,00", visible: true },
+      { name: "Coscia di pollo alla piastra", description: "Grilled chicken leg", price: "€ 12,00", visible: true },
+      { name: "Hamburger* 220 gr.", description: "Hamburger 220g, panino 130g, insalata, pomodoro, patate dippers, anelli di cipolla", price: "€ 13,00", visible: true },
+      { name: "Cheeseburger con Bacon Special 220 gr.", description: "Hamburger 220g, panino 130g, cheddar, bacon, insalata, pomodoro, patate dippers, anelli di cipolla", price: "€ 15,00", visible: true }
     ]
   },
   {
     title: "Contorni",
     dishes: [
-      { name: "Insalata Verde", description: "Insalata verde fresca", price: "€3.00", visible: true },
-      { name: "Insalata Mista", description: "Insalata fresca di stagione", price: "€4.00", visible: true },
-      { name: "Patate al Forno", description: "Patate al forno con rosmarino", price: "€5.00", visible: true },
-      { name: "Patate Fritte", description: "Patate fritte croccanti", price: "€5.00", visible: true },
-      { name: "Verdure Grigliate", description: "Melanzane, zucchine e peperoni grigliati", price: "€5.00", visible: true },
-      { name: "Coperto", description: "Coperto per persona", price: "€2.50", visible: true }
+      { name: "Patate* fritte", description: "French fries", price: "€ 4,00", visible: true },
+      { name: "Patate* fritte Dippers", description: "Dippers french fries", price: "€ 5,00", visible: true },
+      { name: "Patate al forno", description: "Baked potatoes", price: "€ 6,00", visible: true },
+      { name: "Verdure grigliate", description: "Grilled vegetables", price: "€ 7,00", visible: true },
+      { name: "Spinaci al burro", description: "Buttered spinach", price: "€ 5,00", visible: true },
+      { name: "Insalata verde", description: "Green salad", price: "€ 4,00", visible: true },
+      { name: "Insalata contadina", description: "Pomodoro, cipolla, acciughe, olive, origano", price: "€ 6,00", visible: true },
+      { name: "Insalata mista", description: "Pomodoro, lattuga iceberg, radicchio, mais", price: "€ 6,00", visible: true }
     ]
   },
   {
-    title: "Dolci",
+    title: "Insalatone",
     dishes: [
-      { name: "Sorbetto al Limoncello", description: "Sorbetto fresco al limoncello", price: "€6.00", visible: true },
-      { name: "Flute Frutti di Bosco", description: "Flute con frutti di bosco freschi", price: "€6.00", visible: true },
-      { name: "Tiramisù", description: "Tiramisù fatto in casa", price: "€6.00", visible: true },
-      { name: "Cassatina", description: "Piccola cassata siciliana", price: "€4.00", visible: true },
-      { name: "Cannolo Scomposto", description: "Cannolo in versione moderna e scomposta", price: "€5.00", visible: true },
-      { name: "Cheesecake", description: "Cheesecake al Nutella o pistacchio", price: "€6.00", visible: true },
-      { name: "Cannolo", description: "Cannolo tradizionale con ricotta fresca", price: "€4.00", visible: true },
-      { name: "Crepes Nutella", description: "Crepes calde con Nutella", price: "€5.00", visible: true },
-      { name: "Tortino Cuore Caldo", description: "Tortino al cioccolato o pistacchio", price: "€6.00", visible: true },
-      { name: "Cannolo Siciliano", description: "Cannolo con ricotta fresca e cioccolato", price: "€6.00", visible: true },
-      { name: "Cassata Siciliana", description: "Cassata tradizionale con ricotta e canditi", price: "€7.00", visible: true },
-      { name: "Granita", description: "Granita al limone, mandorla o caffè", price: "€5.00", visible: true }
+      { name: "Insalata Bird", description: "Lattuga iceberg, cuori di carciofi, gamberetti*, mais, scaglie di grana padano", price: "€ 12,00", visible: true },
+      { name: "Insalata Capricciosa", description: "Lattuga iceberg, cuori di palma, radicchio, mais, rucola, pomodoro, carote", price: "€ 9,00", visible: true },
+      { name: "Insalata Tottosole", description: "Bresaola, mozzarella di bufala, cuori di palma, radicchio, carote, scaglie di grana padano, funghi freschi", price: "€ 13,00", visible: true },
+      { name: "Caesar Salad", description: "Pollo grigliato, lattuga, radicchio, carote, mais, salsa caesar", price: "€ 12,00", visible: true }
     ]
   },
   {
-    title: "Birre",
+    title: "Pizze Gourmet",
     dishes: [
-      { name: "Heineken", description: "33 cl", price: "€4.00", visible: true },
-      { name: "Beck's", description: "33 cl", price: "€4.00", visible: true },
-      { name: "Ceres", description: "", price: "€5.00", visible: true },
-      { name: "Tennent's", description: "33 cl", price: "€5.00", visible: true },
-      { name: "Nastro Azzurro", description: "33 cl", price: "€4.00", visible: true },
-      { name: "Nastro Azzurro 0.0", description: "33 cl", price: "€4.00", visible: true },
-      { name: "Corona", description: "33 cl", price: "€5.00", visible: true },
-      { name: "Daura Gluten Free", description: "", price: "€5.00", visible: true },
-      { name: "Paulaner", description: "50 cl", price: "€6.00", visible: true },
-      { name: "Ichnusa", description: "33 cl", price: "€5.00", visible: true },
-      { name: "Messina", description: "33 cl", price: "€5.00", visible: true },
-      { name: "Leffe", description: "33 cl", price: "€5.00", visible: true },
-      { name: "Leffe Rossa", description: "33 cl", price: "€5.00", visible: true }
+      { name: "Pistacchiosa", description: "Stracciatella, mortadella, crema di pistacchio, pomodorini rossi e gialli, olio d'oliva, origano", price: "€ 14,00", visible: true },
+      { name: "Trentina", description: "Mozzarella di bufala, speck, gorgonzola, noci, olio d'oliva, origano", price: "€ 14,00", visible: true },
+      { name: "Pantesca", description: "Mozzarella di bufala, capperi, cipolla, pomodorino giallo, acciughe, olio d'oliva, origano", price: "€ 13,00", visible: true },
+      { name: "Datterino", description: "Mozzarella di bufala, pomodorino giallo, pomodoro secco, prosciutto crudo, olio d'oliva, origano", price: "€ 13,00", visible: true }
     ]
   },
   {
-    title: "Vini Bianchi",
+    title: "Pizza della settimana",
     dishes: [
-      { name: "Rosa dei Venti (Gorghi Tondi) Nerello Mascalese", description: "", price: "€24.00", visible: true },
-      { name: "Kheire (Gorghi Tondi) Grillo Riserva 2023", description: "", price: "€50.00", visible: true },
-      { name: "Marameo (Gorghi Tondi) Blend Biologico", description: "", price: "€28.00", visible: true },
-      { name: "Coste a Preola (Gorghi Tondi) Grillo", description: "", price: "€24.00", visible: true },
-      { name: "Tenuta Regaleali Leone", description: "", price: "€35.00", visible: true },
-      { name: "Maria Costanza", description: "", price: "€38.00", visible: true },
-      { name: "Grillo (Cantina Musita)", description: "", price: "€22.00", visible: true },
-      { name: "Chardonnay (Cantina Musita)", description: "", price: "€22.00", visible: true },
-      { name: "Catarratto Pinot Grigio (Cantina Musita)", description: "", price: "€22.00", visible: true },
-      { name: "Organicus Catarratto (Cantina Musita)", description: "", price: "€28.00", visible: true },
-      { name: "Organicus Zibibbo (Cantina Musita)", description: "", price: "€28.00", visible: true },
-      { name: "Passo Calcara (Cantina Musita)", description: "", price: "€30.00", visible: true },
-      { name: "Reggiterre (Cantina Musita)", description: "", price: "€25.00", visible: true },
-      { name: "Organicus Grillo (Cantina Musita)", description: "", price: "€28.00", visible: true }
+      { name: "Vellutata di radicchio, bufala in cottura, speck e grana", description: "", price: "", visible: true }
     ]
   },
   {
-    title: "Vini Frizzanti e Spumanti",
+    title: "Pizze",
     dishes: [
-      { name: "Charme", description: "", price: "€30.00", visible: true },
-      { name: "Acqua Marina", description: "", price: "€22.00", visible: true },
-      { name: "Coppola Anymus", description: "", price: "€25.00", visible: true },
-      { name: "Acqua Marina Rosé", description: "", price: "€22.00", visible: true },
-      { name: "Col Sandaco Rosé", description: "", price: "€30.00", visible: true },
-      { name: "Col Sandaco Brut", description: "", price: "€20.00", visible: true },
-      { name: "Metodo Ancestrale \"Barinello\"", description: "", price: "€35.00", visible: true }
+      { name: "Margherita", description: "Salsa di pomodoro, mozzarella, olio d'oliva, origano", price: "€ 6,50", visible: true },
+      { name: "Bufala", description: "Salsa di pomodoro, mozzarella di bufala, olio d'oliva, origano", price: "€ 8,50", visible: true },
+      { name: "Napoli", description: "Salsa di pomodoro, mozzarella, acciughe, olio d'oliva, origano", price: "€ 6,50", visible: true },
+      { name: "Romana", description: "Salsa di pomodoro, mozzarella, prosciutto cotto, olio d'oliva, origano", price: "€ 7,50", visible: true },
+      { name: "Quattro gusti", description: "Salsa di pomodoro, mozzarella, prosciutto cotto, carciofi, olio d'oliva, origano", price: "€ 8,00", visible: true },
+      { name: "Capricciosa", description: "Salsa di pomodoro, mozzarella, prosciutto cotto, carciofi, funghi freschi, würstel, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Diavola", description: "Salsa di pomodoro, mozzarella, salamino piccante, olio d'oliva, origano", price: "€ 7,50", visible: true },
+      { name: "Crudo", description: "Salsa di pomodoro, mozzarella, prosciutto crudo, olio d'oliva, origano", price: "€ 8,50", visible: true },
+      { name: "Sfincionella", description: "Salsa di pomodoro, acciughe, cipolla, caciocavallo, pangrattato, olio d'oliva, origano", price: "€ 7,50", visible: true },
+      { name: "Gustosa", description: "Salsa di pomodoro, mozzarella di bufala, scamorza affumicata, speck, rucola, olio d'oliva, origano", price: "€ 10,00", visible: true },
+      { name: "Ciliegina", description: "Salsa di pomodoro, mozzarella, funghi freschi, zucchine, caciocavallo, pomodorini", price: "€ 9,00", visible: true },
+      { name: "Prataiola", description: "Salsa di pomodoro, prosciutto crudo, spinaci*, funghi freschi, olio d'oliva, origano", price: "€ 9,50", visible: true },
+      { name: "Calzone", description: "Salsa di pomodoro, mozzarella, prosciutto cotto, olio d'oliva, origano", price: "€ 7,50", visible: true },
+      { name: "Enzo", description: "Salsa di pomodoro, grana padano infornato, olio d'oliva, origano", price: "€ 6,50", visible: true },
+      { name: "Bird", description: "Salsa di pomodoro, mozzarella di bufala, prosciutto crudo, grana padano, pomodorini, rucola, olio d'oliva, origano", price: "€ 12,50", visible: true },
+      { name: "Chicken BBQ", description: "Salsa di pomodoro, mozzarella, pollo fritto, patate fritte, salsa barbecue", price: "€ 11,00", visible: true },
+      { name: "Ida", description: "Salsa di pomodoro, mozzarella, mozzarella di bufala, speck, olio d'oliva, origano", price: "€ 10,00", visible: true },
+      { name: "Patatosa", description: "Salsa di pomodoro, mozzarella, patate fritte, würstel, olio d'oliva, origano", price: "€ 8,00", visible: true },
+      { name: "Vegetariana", description: "Salsa di pomodoro, mozzarella, spinaci*, melanzane, peperoni, zucchine, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Parmigiana", description: "Salsa di pomodoro, mozzarella, melanzane, grana padano, olio d'oliva, origano", price: "€ 8,00", visible: true },
+      { name: "Salsiccia & Funghi", description: "Salsa di pomodoro, salsiccia, mozzarella, funghi freschi, olio d'oliva, origano", price: "€ 8,50", visible: true },
+      { name: "Porcini", description: "Salsa di pomodoro, mozzarella, funghi porcini, olio d'oliva, origano", price: "€ 10,00", visible: true },
+      { name: "Campagnola", description: "Salsa di pomodoro, mozzarella, prosciutto crudo, salsiccia, cipolla, peperoni, funghi freschi, olio d'oliva, origano", price: "€ 11,00", visible: true },
+      { name: "Salmone", description: "Salsa di pomodoro, mozzarella, salmone a fette, olio d'oliva, origano", price: "€ 12,00", visible: true },
+      { name: "Sindaco", description: "Salsa di pomodoro, caciocavallo, olio d'oliva, origano", price: "€ 7,00", visible: true },
+      { name: "Marinara", description: "Salsa di pomodoro, acciughe, olio d'oliva, aglio, origano", price: "€ 6,50", visible: true },
+      { name: "Tonno", description: "Salsa di pomodoro, mozzarella, tonno, cipolla, olio d'oliva, origano", price: "€ 9,00", visible: true }
     ]
   },
   {
-    title: "Vini Rossi",
+    title: "Pizze bianche",
     dishes: [
-      { name: "Coste a Preola (Gorghi Tondi) Nero d'Avola", description: "", price: "€24.00", visible: true },
-      { name: "Meridiano (Gorghi Tondi) Syrah", description: "", price: "€24.00", visible: true },
-      { name: "Frappato Organicus", description: "", price: "€28.00", visible: true },
-      { name: "Reggiterre", description: "", price: "€25.00", visible: true },
-      { name: "Col Sandago Camoi", description: "", price: "€38.00", visible: true },
-      { name: "Maria Costanza", description: "", price: "€40.00", visible: true }
+      { name: "Biancaneve", description: "Mozzarella, olio d'oliva, origano", price: "€ 6,00", visible: true },
+      { name: "Friarielli", description: "Mozzarella, salsiccia, friarielli, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Bolognese", description: "Mozzarella, mortadella, granella di pistacchio, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Bresaola", description: "Mozzarella di bufala, bresaola, grana padano, rucola, olio d'oliva, origano", price: "€ 12,50", visible: true },
+      { name: "Quattro formaggi", description: "Mozzarella, emmental, gorgonzola, caciocavallo, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Deliziosa", description: "Mozzarella, mozzarella di bufala, philadelphia, speck infornato, granella di pistacchio, olio d'oliva", price: "€ 11,50", visible: true }
+    ]
+  },
+  {
+    title: "Covaccini (condimenti crudi)",
+    dishes: [
+      { name: "Campana", description: "Mozzarella di bufala, prosciutto crudo, grana padano, rucola, olio d'oliva, origano", price: "€ 11,00", visible: true },
+      { name: "Caprese", description: "Mozzarella di bufala, pomodoro a fette, basilico, olio d'oliva, origano", price: "€ 9,00", visible: true },
+      { name: "Norvegese", description: "Salmone affumicato, rucola, olio d'oliva", price: "€ 11,00", visible: true },
+      { name: "Piemontese", description: "Bresaola, grana padano, rucola, olio d'oliva", price: "€ 11,00", visible: true },
+      { name: "Pizza pane al limone", description: "Limone, grana padano, pangrattato, olio, sale, pepe", price: "€ 6,00", visible: true }
+    ]
+  },
+  {
+    title: "Schiacciate",
+    dishes: [
+      { name: "Siciliana", description: "Mozzarella, prosciutto cotto, pomodoro a fette, acciughe, olio d'oliva, origano", price: "€ 7,50", visible: true },
+      { name: "Bird", description: "Mozzarella di bufala, prosciutto crudo, grana padano, pomodorini, rucola, olio d'oliva, origano", price: "€ 11,00", visible: true },
+      { name: "Contadina", description: "Mozzarella, salsiccia, melanzane, emmental, olio d'oliva, origano", price: "€ 8,00", visible: true },
+      { name: "Gustosità", description: "Mozzarella di bufala, scamorza affumicata, speck, olio d'oliva, origano", price: "€ 10,00", visible: true },
+      { name: "Greca", description: "Mozzarella, prosciutto cotto, melanzane, caciocavallo, olio d'oliva, origano", price: "€ 8,50", visible: true },
+      { name: "Deliziosa", description: "Mozzarella, mozzarella di bufala, philadelphia, speck infornato, granella di pistacchio, olio d'oliva", price: "€ 11,50", visible: true },
+      { name: "Pane cunsatu", description: "Caciocavallo, pomodoro a fette, acciughe, olio d'oliva, origano", price: "€ 7,00", visible: true }
+    ]
+  },
+  {
+    title: "Dessert",
+    dishes: [
+      { name: "Parfait di mandorle", description: "Almond parfait", price: "€ 6,00", visible: true },
+      { name: "Cheescake", description: "", price: "€ 6,00", visible: true },
+      { name: "Tiramisù (semifreddo)", description: "", price: "€ 5,00", visible: true },
+      { name: "Cassattelle di ricotta fritte (1 pz.)", description: "Fried ricotta cassatelle (1 pcs)", price: "€ 1,50", visible: true },
+      { name: "Soufflé al cioccolato", description: "Chocolate souffle", price: "€ 5,00", visible: true },
+      { name: "Tartufo bianco o nero", description: "White or black truffle", price: "€ 5,00", visible: true },
+      { name: "Sorbetto al limone", description: "", price: "€ 5,00", visible: true }
+    ]
+  },
+  {
+    title: "Frutta",
+    dishes: [
+      { name: "Ananas", description: "Pineapple", price: "€ 5,00", visible: true },
+      { name: "Cantalupo", description: "Cantaloupe", price: "€ 5,00", visible: true },
+      { name: "Melone bianco", description: "White melon", price: "€ 5,00", visible: true },
+      { name: "Frutta mista", description: "Mixed fruit", price: "€ 7,00", visible: true },
+      { name: "Frutta di stagione", description: "Seasonal fruit", price: "€ 5,00", visible: true }
+    ]
+  },
+  {
+    title: "Digestivi - Caffè",
+    dishes: [
+      { name: "Caffè espresso", description: "", price: "€ 1,50", visible: true },
+      { name: "Caffè decaffeinato", description: "", price: "€ 2,00", visible: true },
+      { name: "Caffè americano", description: "", price: "€ 2,50", visible: true },
+      { name: "Limoncello", description: "", price: "€ 4,00", visible: true },
+      { name: "Amaro", description: "", price: "€ 5,00", visible: true }
     ]
   },
   {
     title: "Bibite",
     dishes: [
-      { name: "Acqua", description: "50 cl", price: "€1.50", visible: true },
-      { name: "Acqua", description: "1 lt", price: "€3.00", visible: true },
-      { name: "Coca Cola", description: "33 cl", price: "€2.50", visible: true },
-      { name: "Coca Cola Zero", description: "33 cl", price: "€2.50", visible: true },
-      { name: "Fanta", description: "33 cl", price: "€2.50", visible: true },
-      { name: "Sprite", description: "33 cl", price: "€2.50", visible: true },
-      { name: "Chinotto", description: "33 cl", price: "€2.50", visible: true },
-      { name: "Thé Pesca / Limone", description: "", price: "€2.50", visible: true },
-      { name: "Schweppes Lemon / Tonic", description: "", price: "€2.50", visible: true },
-      { name: "Fever-Tree", description: "Mediterranean, Indian, Fever-Tree Ginger Beer, Fever-Tree Pink Grapefruit", price: "€3.00", visible: true }
+      { name: "Acqua Minerale (100 cl)", description: "Mineral water 1 lt", price: "€ 2,50", visible: true },
+      { name: "CocaCola (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "CocaCola Zero (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "Sprite (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "Fanta (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "Lemonsoda (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "Chinotto (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "Acqua Tonica (33 cl)", description: "", price: "€ 2,50", visible: true },
+      { name: "The Pesca-Limone (33 cl)", description: "", price: "€ 3,00", visible: true },
+      { name: "Succo di frutta", description: "", price: "€ 3,00", visible: true },
+      { name: "Red Bull", description: "", price: "€ 5,00", visible: true }
     ]
   },
   {
-    title: "Caffetteria",
+    title: "Birre alla spina",
     dishes: [
-      { name: "Caffè", description: "", price: "€1.50", visible: true },
-      { name: "Caffè Doppio", description: "", price: "€3.00", visible: true },
-      { name: "Caffè Macchiato", description: "", price: "€1.50", visible: true },
-      { name: "Caffè Americano", description: "", price: "€2.50", visible: true },
-      { name: "Decaffeinato", description: "", price: "€1.80", visible: true },
-      { name: "Cappuccino", description: "", price: "€2.50", visible: true },
-      { name: "Cappuccino di Soia", description: "", price: "€2.80", visible: true },
-      { name: "Cappuccino senza Lattosio", description: "", price: "€2.80", visible: true },
-      { name: "Macchiatone", description: "", price: "€2.00", visible: true },
-      { name: "Latte Bianco", description: "", price: "€1.80", visible: true },
-      { name: "Latte Macchiato", description: "", price: "€2.50", visible: true },
-      { name: "Thé Caldo", description: "", price: "€3.50", visible: true },
-      { name: "Tisane", description: "", price: "€3.50", visible: true },
-      { name: "Infusi", description: "", price: "€3.50", visible: true },
-      { name: "Succo di Frutta", description: "", price: "€2.50", visible: true },
-      { name: "Succo di Melograno", description: "", price: "€3.00", visible: true },
-      { name: "Succo al Mirtillo", description: "", price: "€3.00", visible: true },
-      { name: "Ginseng piccolo", description: "", price: "€1.80", visible: true },
-      { name: "Ginseng grande", description: "", price: "€2.50", visible: true },
-      { name: "Cremino", description: "", price: "€4.00", visible: true },
-      { name: "Cornetto", description: "", price: "€1.50", visible: true },
-      { name: "Cornetto Special", description: "", price: "€1.80", visible: true },
-      { name: "Mignon Dolce / Salato", description: "", price: "€1.00", visible: true },
-      { name: "Rosticceria", description: "", price: "€2.00", visible: true },
-      { name: "Rosticceria Special", description: "", price: "€2.50", visible: true }
+      { name: "Moretti Bionda", description: "0,2 lt € 3,50 • 0,4 lt € 6,00 • 1 lt € 12,00", price: "", visible: true },
+      { name: "Moretti Rossa", description: "0,2 lt € 4,00 • 0,4 lt € 7,00 • 1 lt € 14,00", price: "", visible: true }
     ]
   },
   {
-    title: "Drink List",
+    title: "Birre in bottiglia",
     dishes: [
-      { name: "MILLER'S", description: "Gin Martin Miller's, Tonica, Fragole, Bacche di ginepro, Pepe nero in grani", price: "€12.00", visible: true },
-      { name: "NEGRONI DEL CAPITANO", description: "Bitter Bianco Luxardo, Vermouth Rosso, Mezcal 100% Agave, Liquore al caffè, Orange Twist", price: "€9.00", visible: true },
-      { name: "PALOMA", description: "Tequila Espolon 100% Agave, Succo di limone, Lime, Soda al Pompelmo rosa, Sale", price: "€9.00", visible: true },
-      { name: "TOMMY'S MEZCAL MARGARITA", description: "Mezcal 100% Agave, Succo di limone, Lime, Sciroppo, Sale", price: "€9.00", visible: true },
-      { name: "BASIL SMASH", description: "Gin, succo di limone, zucchero di canna liquido, basilico fresco shakerato e filtrato", price: "€8.00", visible: true },
-      { name: "VODKA SOUR AL MARACUJA", description: "Vodka, Succo di limone, Zucchero di canna liquido, Purea di Maracuja, Menta", price: "€8.00", visible: true }
+      { name: "Heineken (33 cl)", description: "Tipo: Lager • Alcol: 5%", price: "€ 3,50", visible: true },
+      { name: "Heineken 0.0 (33 cl)", description: "Tipo: Lager • Alcol: 0%", price: "€ 3,50", visible: true },
+      { name: "Paulaner Weissbier (50 cl)", description: "Tipo: Bianca • Alcol: 5,3%", price: "€ 6,00", visible: true },
+      { name: "Moretti Zero (33 cl)", description: "Tipo: Radler • Alcol: 0%", price: "€ 3,50", visible: true },
+      { name: "Corona (33 cl)", description: "Tipo: Lager • Alcol: 4,5%", price: "€ 4,50", visible: true },
+      { name: "Ceres (33 cl)", description: "Tipo: Strong Ale • Alcol: 7,7%", price: "€ 4,50", visible: true },
+      { name: "Tennent's (33 cl)", description: "Tipo: Super Strong Lager • Alcol: 9%", price: "€ 4,50", visible: true },
+      { name: "Peroni Gluten Free (33 cl)", description: "Tipo: Lager senza glutine • Alcol: 4,7%", price: "€ 3,50", visible: true },
+      { name: "Nastro Azzurro (50 cl)", description: "Tipo: Lager • Alcol: 5,2%", price: "€ 5,00", visible: true },
+      { name: "Messina ai Cristalli di Sale (50 cl)", description: "Tipo: Lager non filtrata • Alcol: 5%", price: "€ 6,00", visible: true },
+      { name: "Leffe Blond (75 cl)", description: "Tipo: Ale • Alcol: 6,6%", price: "€ 12,00", visible: true },
+      { name: "Leffe Radieuse (75 cl)", description: "Tipo: Ale • Alcol: 8,2%", price: "€ 12,00", visible: true }
     ]
   },
   {
-    title: "Cocktail",
+    title: "Fuori menù",
     dishes: [
-      { name: "BARINELLO", description: "Ventuno, Prosecco, Soda", price: "€8.00", visible: true },
-      { name: "SPRITZ", description: "Aperol, Prosecco, Soda", price: "€8.00", visible: true },
-      { name: "MOSCOW MULE", description: "Vodka, Ginger Beer, Lime", price: "€8.00", visible: true },
-      { name: "LONDON MULE", description: "Gin, Ginger Beer, Lime", price: "€8.00", visible: true },
-      { name: "NEGRONI", description: "Gin, Bitter Campari, Martini", price: "€8.00", visible: true },
-      { name: "GIN TONIC", description: "Gin, Tonica", price: "€8.00", visible: true },
-      { name: "GIN LEMON", description: "Gin, Limoncello", price: "€8.00", visible: true },
-      { name: "GIN FIZZ", description: "Gin, Succo di Lime, Zucchero liquido, Tonica", price: "€8.00", visible: true },
-      { name: "VODKA FIZZ", description: "Vodka, Succo di Lime, Zucchero liquido, Tonica", price: "€8.00", visible: true },
-      { name: "NEGROSKI", description: "Vodka, Bitter Campari, Martini Rosso", price: "€8.00", visible: true },
-      { name: "NEGRONI SBAGLIATO", description: "Bitter Campari, Martini Rosso, Prosecco", price: "€8.00", visible: true },
-      { name: "LONG ISLAND", description: "Vodka, Gin, Rum, Triple sec, Sweet&Sour, Coca-Cola", price: "€8.00", visible: true },
-      { name: "CUBA LIBRE", description: "Rum, Sweet&Sour, Coca-Cola", price: "€8.00", visible: true },
-      { name: "COCKTAIL MARTINI", description: "Gin, Martini Dry", price: "€8.00", visible: true },
-      { name: "MANHATTAN", description: "Whisky, Martini Rosso, Angostura", price: "€8.00", visible: true },
-      { name: "AMERICANO", description: "Bitter Campari, Martini Rosso, Angostura", price: "€8.00", visible: true },
-      { name: "COSMOPOLITAN", description: "Vodka, Triple sec, Succo di Mirtillo, Lime", price: "€8.00", visible: true },
-      { name: "MARGARITA", description: "Tequila, Triple sec, Succo di Lime", price: "€8.00", visible: true },
-      { name: "HUGO", description: "St. Germain, Prosecco, Soda", price: "€10.00", visible: true },
-      { name: "TEQUILA SUNRISE", description: "Tequila, Succo di Arancia, Granatina", price: "€8.00", visible: true },
-      { name: "DAIQUIRI", description: "Rum Bianco, Lime, Zucchero liquido", price: "€8.00", visible: true },
-      { name: "BELLINI", description: "Prosecco, Purea di Pesca", price: "€8.00", visible: true },
-      { name: "ROSSINI", description: "Prosecco, Purea di Fragole", price: "€8.00", visible: true },
-      { name: "PIÑA COLADA", description: "Rum Chiaro, Latte di Cocco, Succo di Ananas", price: "€8.00", visible: true },
-      { name: "SEX ON THE BEACH", description: "Vodka, Liquore alla Pesca, Succo di Mirtillo, Arancia", price: "€8.00", visible: true },
-      { name: "JAPAN ICE TEA", description: "Vodka, Gin, Rum, Midori, Sweet&Sour, Limonata", price: "€8.00", visible: true },
-      { name: "BLOODY MARY", description: "Vodka, Succo di Pomodoro, Lime, Worcestershire, Sale, Pepe, Sedano", price: "€8.00", visible: true }
-    ]
-  },
-  {
-    title: "Muddled Cocktails",
-    dishes: [
-      { name: "CAIPIRINHA", description: "Cachaça, Lime, Zucchero di canna", price: "€10.00", visible: true },
-      { name: "CAIPIROSKA", description: "Vodka, Lime, Zucchero di canna", price: "€10.00", visible: true },
-      { name: "MOJITO", description: "Rum cubano bianco, Lime, Zucchero di canna", price: "€10.00", visible: true },
-      { name: "CAIPIRISSIMA", description: "Rum Bianco, Lime, Zucchero di canna", price: "€10.00", visible: true },
-      { name: "CUBA LIBRE PESTATO", description: "Rum cubano Ambrato, Lime, Zucchero di canna, Coca Cola", price: "€10.00", visible: true }
-    ]
-  },
-  {
-    title: "Frozen",
-    dishes: [
-      { name: "MARGARITA FROZEN", description: "Tequila, Succo di Lime, Cointreau", price: "€10.00", visible: true },
-      { name: "PIÑA COLADA FROZEN", description: "Rum Bianco, Latte di Cocco, Succo di ananas", price: "€10.00", visible: true },
-      { name: "DAIQUIRI FROZEN", description: "Rum Bianco, Succo di Lime", price: "€10.00", visible: true },
-      { name: "DAIQUIRI STRAWBERRY FROZEN", description: "Rum Bianco, Lime, Sciroppo alla Fragola", price: "€10.00", visible: true }
-    ]
-  },
-  {
-    title: "Non-Alcoholic drinks",
-    dishes: [
-      { name: "EXOTIC", description: "Succo di arancia, Succo di ananas, Sciroppo di Papaya", price: "€6.00 / €8.00", visible: true },
-      { name: "FRUIT", description: "Succo di arancia, Succo di ananas, Sciroppo alla Fragola", price: "€6.00 / €8.00", visible: true },
-      { name: "VIRGIN MOJITO", description: "Succo, Menta, Succo di lime, Zucchero bianco", price: "€6.00 / €8.00", visible: true },
-      { name: "VIRGIN PINA COLADA", description: "Latte di Cocco, Succo di ananas", price: "€6.00 / €8.00", visible: true },
-      { name: "VIRGIN BLOODY MARY", description: "Succo di pomodoro, Succo di lime, Sale, Pepe, Worcestershire, Tabasco", price: "€6.00 / €8.00", visible: true },
-      { name: "ORANGE", description: "Succo di arancia, Granatina, Limonata", price: "€6.00 / €8.00", visible: true }
-    ]
-  },
-  {
-    title: "Gin",
-    dishes: [
-      { name: "ROKU", description: "", price: "€15.00", visible: true },
-      { name: "SAKURAD", description: "", price: "€15.00", visible: true },
-      { name: "PALMA", description: "", price: "€16.00", visible: true },
-      { name: "MALPY LIMONE", description: "", price: "€12.00", visible: true },
-      { name: "MALPY ORIGINALE", description: "", price: "€12.00", visible: true },
-      { name: "MALPY ARANCIA", description: "", price: "€12.00", visible: true },
-      { name: "TANQUERAY", description: "", price: "€8.00", visible: true },
-      { name: "TANQUERAY 0.0", description: "", price: "€8.00", visible: true },
-      { name: "TANQUERAY TEN", description: "", price: "€12.00", visible: true },
-      { name: "BOMBAY", description: "", price: "€9.00", visible: true },
-      { name: "GIN MARE", description: "", price: "€12.00", visible: true },
-      { name: "HENDRICKS", description: "", price: "€12.00", visible: true },
-      { name: "MALPY POMPELMO ROSA", description: "", price: "€12.00", visible: true },
-      { name: "NORDES", description: "", price: "€12.00", visible: true },
-      { name: "DOLCE VITA", description: "", price: "€12.00", visible: true },
-      { name: "PORTOFINO", description: "", price: "€16.00", visible: true },
-      { name: "MARTIN MILLERS", description: "", price: "€10.00", visible: true }
-    ]
-  },
-  {
-    title: "Vodka",
-    dishes: [
-      { name: "SMIRNOFF", description: "", price: "€8.00", visible: true },
-      { name: "MOSCOVSKAYA", description: "", price: "€8.00", visible: true },
-      { name: "BELVEDERE", description: "", price: "€12.00", visible: true },
-      { name: "GREY GOOSE", description: "", price: "€12.00", visible: true },
-      { name: "BELUGA", description: "", price: "€14.00", visible: true }
-    ]
-  },
-  {
-    title: "Rum",
-    dishes: [
-      { name: "JACAPA 23", description: "", price: "€12.00", visible: true },
-      { name: "DIPLOMATICO", description: "", price: "€10.00", visible: true },
-      { name: "DON PAPA", description: "", price: "€12.00", visible: true },
-      { name: "ANNIVERSARIO", description: "", price: "€8.00", visible: true },
-      { name: "LEGENDARIO", description: "", price: "€8.00", visible: true },
-      { name: "CAPTAIN MORGAN BIANCO", description: "", price: "€8.00", visible: true },
-      { name: "CAPTAIN MORGAN SCURO", description: "", price: "€8.00", visible: true }
-    ]
-  },
-  {
-    title: "Bitters",
-    dishes: [
-      { name: "JAGERMEISTER", description: "", price: "€5.00", visible: true },
-      { name: "AVERNA", description: "", price: "€5.00", visible: true },
-      { name: "MONTE POLIZO", description: "", price: "€5.00", visible: true },
-      { name: "MONTENEGRO", description: "", price: "€5.00", visible: true },
-      { name: "AMARO AMARA", description: "", price: "€5.00", visible: true },
-      { name: "UNICUM", description: "", price: "€5.00", visible: true },
-      { name: "PETRUS", description: "", price: "€5.00", visible: true },
-      { name: "AMARO DEL CAPO", description: "", price: "€5.00", visible: true },
-      { name: "FERNET", description: "", price: "€5.00", visible: true }
-    ]
-  },
-  {
-    title: "Liqueurs",
-    dishes: [
-      { name: "ZIBIBBO", description: "", price: "€5.00", visible: true },
-      { name: "MARSALA", description: "", price: "€5.00", visible: true },
-      { name: "DISARONNO", description: "", price: "€5.00", visible: true },
-      { name: "LIMONCELLO", description: "", price: "€5.00", visible: true },
-      { name: "SAMBUCA", description: "", price: "€5.00", visible: true },
-      { name: "MALIBU", description: "", price: "€5.00", visible: true },
-      { name: "COINTREAU", description: "", price: "€5.00", visible: true },
-      { name: "BAYLES", description: "", price: "€5.00", visible: true },
-      { name: "KAHLUA", description: "", price: "€5.00", visible: true },
-      { name: "PASSOA", description: "", price: "€5.00", visible: true },
-      { name: "MARTINI BIANCO", description: "", price: "€5.00", visible: true },
-      { name: "MARTINI ROSSO", description: "", price: "€5.00", visible: true },
-      { name: "CAMPARI", description: "", price: "€5.00", visible: true }
-    ]
-  },
-  {
-    title: "Whisky",
-    dishes: [
-      { name: "JACK DANIEL'S", description: "", price: "€6.00", visible: true },
-      { name: "JACK DANIEL'S HONEY", description: "", price: "€6.00", visible: true },
-      { name: "JACK DANIEL'S FIRE", description: "", price: "€2.00", visible: true },
-      { name: "FIREBALL", description: "", price: "€6.00", visible: true },
-      { name: "JAMESON IRISH", description: "", price: "€6.00", visible: true },
-      { name: "RED LABEL", description: "", price: "€6.00", visible: true },
-      { name: "BALLANTINE'S", description: "", price: "€6.00", visible: true },
-      { name: "SOUTHERN COMFORT", description: "", price: "€6.00", visible: true },
-      { name: "TALISKER 10 anni", description: "", price: "€12.00", visible: true },
-      { name: "OBAN 14 anni", description: "", price: "€14.00", visible: true },
-      { name: "LAGAVULIN 16 anni", description: "", price: "€14.00", visible: true },
-      { name: "BULLEIT", description: "", price: "€8.00", visible: true }
-    ]
-  },
-  {
-    title: "Grappa",
-    dishes: [
-      { name: "903 BIANCA", description: "", price: "€5.00", visible: true },
-      { name: "903 BARRIQUE", description: "", price: "€5.00", visible: true },
-      { name: "OF BARRIQUE", description: "", price: "€8.00", visible: true }
-    ]
-  },
-  {
-    title: "Champagne",
-    dishes: [
-      { name: "MARTIN ORSYN", description: "", price: "€55.00", visible: true },
-      { name: "FERRARI", description: "", price: "€60.00", visible: true },
-      { name: "BERLUCCHI", description: "", price: "€60.00", visible: true },
-      { name: "VEUVE CLICQUOT", description: "", price: "€100.00", visible: true },
-      { name: "MOËT & CHANDON", description: "", price: "€100.00", visible: true },
-      { name: "CÀ DEL BOSCO", description: "", price: "€80.00", visible: true }
-    ]
-  },
-  {
-    title: "Tequila",
-    dishes: [
-      { name: "Tequila", description: "Selezione disponibile", price: "Su richiesta", visible: true }
+      { name: "Stinco di maiale con patate alla tedesca e crauti", description: "", price: "", visible: true },
+      { name: "Ravioli ripieni di gamberi e zucchine con ragù di ricciola", description: "", price: "", visible: true },
+      { name: "Carciofo ripieno di salsa sfinzione su fonduta di formaggi", description: "", price: "", visible: true },
+      { name: "Moffoletta con porchetta", description: "", price: "", visible: true }
     ]
   }
 ]
-
-

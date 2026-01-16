@@ -15,19 +15,8 @@ export async function GET() {
         .single()
 
       if (!error && data && data.value && Array.isArray(data.value) && data.value.length > 0) {
-        // Unisci i dati salvati con i dati di default per assicurarsi che tutte le categorie siano presenti
-        const savedCategories = data.value as typeof defaultMenuCategories
-        const savedTitles = new Set(savedCategories.map((cat: any) => cat.title))
-        
-        // Aggiungi le categorie di default che non sono presenti nei dati salvati
-        const missingCategories = defaultMenuCategories.filter(
-          defaultCat => !savedTitles.has(defaultCat.title)
-        )
-        
-        // Combina i dati salvati con le categorie mancanti
-        const mergedCategories = [...savedCategories, ...missingCategories]
-        
-        return NextResponse.json(mergedCategories)
+        // Restituisci solo i dati salvati (non fare merge con default per evitare vecchi piatti)
+        return NextResponse.json(data.value)
       }
     }
     
