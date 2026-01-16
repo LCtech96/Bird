@@ -198,17 +198,27 @@ export async function POST(request: NextRequest) {
       knowledgeInfo += ` | Eventi: ${eventsText}`
     }
     
+    // Aggiungi le Informazioni Aggiuntive come DATASET/CONOSCENZA dell'AI
+    let additionalInfoSection = ""
+    if (aiKnowledge.additionalInfo && aiKnowledge.additionalInfo.trim()) {
+      additionalInfoSection = `\n\nDATASET/CONOSCENZA AI (FONTE DI VERITÀ - USA QUESTE INFORMAZIONI PER RISPONDERE):
+${aiKnowledge.additionalInfo.trim()}
+
+IMPORTANTE: Tutto ciò che è scritto nel DATASET sopra è la tua fonte di conoscenza. Quando ti viene chiesto qualcosa relativo a queste informazioni, DEVI usare esattamente ciò che è scritto nel DATASET. Se nel DATASET c'è scritto "il cielo è rosso", quando ti chiedono il colore del cielo, DEVI rispondere che il cielo è rosso.`
+    }
+    
     // Costruisci il prompt finale - include menu solo se necessario
     let systemPromptWithTime = `${BASE_SYSTEM_PROMPT}
 
 INFO ADMIN: ${knowledgeInfo}
-Data/ora: ${currentDate}, ${currentTime} (Italia)
+Data/ora: ${currentDate}, ${currentTime} (Italia)${additionalInfoSection}
 
 REGOLE:
 - Risposte BREVISSIME (2-3 frasi max)
 - Nome + prezzo quando menzioni piatti
 - Usa "siamo aperti/chiusi" (non "siete") - quando rispondi in italiano
-- LINGUA: Rispondi SEMPRE nella stessa lingua del messaggio del cliente (italiano, inglese, francese, spagnolo, tedesco, ecc.)`
+- LINGUA: Rispondi SEMPRE nella stessa lingua del messaggio del cliente (italiano, inglese, francese, spagnolo, tedesco, ecc.)
+- DATASET: Usa SEMPRE le informazioni dal DATASET/CONOSCENZA AI per rispondere alle domande. Se una domanda riguarda informazioni presenti nel DATASET, usa esattamente quelle informazioni.`
 
     // Aggiungi menu solo se necessario per risparmiare token
     // Limita la lunghezza del menu a max 1500 caratteri
