@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, Upload, Image as ImageIcon, Plus, Trash2, Eye, EyeOff, Edit2 } from "lucide-react"
 import Link from "next/link"
+import { ImageCropper } from "@/components/ImageCropper"
 
 interface EditableImage {
   id: string
@@ -33,6 +34,7 @@ export default function AdminContentPage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
   const [editingItem, setEditingItem] = useState<{ type: "video" | "image"; index: number } | null>(null)
+  const [croppingImage, setCroppingImage] = useState<{ image: string; type: "cover" | "profile" } | null>(null)
   const router = useRouter()
   const MAX_INLINE_VIDEO_BYTES = 6 * 1024 * 1024 // ~6MB base64 max per evitare 413
   const MAX_UPLOAD_VIDEO_BYTES = 8 * 1024 * 1024 // ~8MB file max per upload diretto
@@ -102,38 +104,22 @@ export default function AdminContentPage() {
 
   const handleImageUpload = async (type: "cover" | "profile", file: File) => {
     try {
-      setMessage("Caricamento immagine...")
-      
-      // Converti il file in base64
+      // Verifica che sia un'immagine
+      if (!file.type.startsWith("image/")) {
+        setMessage("Il file deve essere un'immagine")
+        setTimeout(() => setMessage(""), 3000)
+        return
+      }
+
+      // Leggi il file e mostra il cropper
       const reader = new FileReader()
-      reader.onloadend = async () => {
-        const base64Image = reader.result as string
-        
-        // Upload su Supabase
-        const response = await fetch("/api/upload/hero-images", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type,
-            fileName: file.name,
-            imageData: base64Image
-          })
+      reader.onloadend = () => {
+        const imageDataUrl = reader.result as string
+        // Mostra il cropper con l'immagine caricata
+        setCroppingImage({
+          image: imageDataUrl,
+          type
         })
-        
-        if (response.ok) {
-          const data = await response.json()
-          // Aggiorna il contenuto con il base64
-          if (type === "cover") {
-            setContent({ ...content, coverImage: data.imageUrl })
-          } else {
-            setContent({ ...content, profileImage: data.imageUrl })
-          }
-          setMessage("Immagine caricata con successo! Ricorda di salvare.")
-          setTimeout(() => setMessage(""), 3000)
-        } else {
-          setMessage("Errore durante il caricamento dell'immagine")
-          setTimeout(() => setMessage(""), 3000)
-        }
       }
       reader.onerror = () => {
         setMessage("Errore durante la lettura del file")
@@ -141,10 +127,57 @@ export default function AdminContentPage() {
       }
       reader.readAsDataURL(file)
     } catch (error) {
-      console.error("Error uploading image:", error)
+      console.error("Error reading image:", error)
+      setMessage("Errore durante la lettura del file")
+      setTimeout(() => setMessage(""), 3000)
+    }
+  }
+
+  const handleCropComplete = async (croppedImage: string) => {
+    if (!croppingImage) return
+
+    const { type } = croppingImage
+    
+    try {
+      setMessage("Caricamento immagine...")
+      
+      // Upload su Supabase
+      const response = await fetch("/api/upload/hero-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type,
+          fileName: `hero-${type}-${Date.now()}.jpg`,
+          imageData: croppedImage
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        // Aggiorna il contenuto con il base64
+        if (type === "cover") {
+          setContent({ ...content, coverImage: data.imageUrl })
+        } else {
+          setContent({ ...content, profileImage: data.imageUrl })
+        }
+        setMessage("Immagine ritagliata e caricata con successo! Ricorda di salvare.")
+        setTimeout(() => setMessage(""), 3000)
+      } else {
+        setMessage("Errore durante il caricamento dell'immagine")
+        setTimeout(() => setMessage(""), 3000)
+      }
+    } catch (error) {
+      console.error("Error uploading cropped image:", error)
       setMessage("Errore durante il caricamento dell'immagine")
       setTimeout(() => setMessage(""), 3000)
     }
+    
+    // Chiudi il cropper
+    setCroppingImage(null)
+  }
+
+  const handleCropCancel = () => {
+    setCroppingImage(null)
   }
 
   const handleFileUpload = (file: File, callback: (base64: string) => void) => {
@@ -763,6 +796,17 @@ export default function AdminContentPage() {
           </div>
         </div>
       </div>
+
+      {/* Image Cropper Modal */}
+      {croppingImage && (
+        <ImageCropper
+          image={croppingImage.image}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+          aspectRatio={croppingImage.type === "cover" ? 16/9 : 1} // Cover più largo, profile quadrato
+          cropShape="rect"
+        />
+      )}
     </main>
   )
 }

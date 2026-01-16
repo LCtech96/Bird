@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, Trash2, Plus, Eye, EyeOff, Upload } from "lucide-react"
 import Image from "next/image"
+import { ImageCropper } from "@/components/ImageCropper"
 
 interface TeamMember {
   id: number

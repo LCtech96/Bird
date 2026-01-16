@@ -6,6 +6,7 @@ import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X, Search } from "l
 import Link from "next/link"
 import { defaultMenuCategories } from "@/lib/menu-data-default"
 import { menuCategoriesFromPublic } from "@/lib/menu-data-from-public"
+import { ImageCropper } from "@/components/ImageCropper"
 
 interface Dish {
   name: string
@@ -27,6 +28,7 @@ export default function AdminAsportoPage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [croppingImage, setCroppingImage] = useState<{ image: string; categoryIndex: number; dishIndex: number } | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -284,51 +286,46 @@ export default function AdminAsportoPage() {
       return
     }
 
-    // Crea un'anteprima immediata con blob URL per feedback visivo immediato
-    const previewUrl = URL.createObjectURL(file)
-    
-    // Aggiorna immediatamente con l'anteprima blob URL
-    updateDish(categoryIndex, dishIndex, "image", previewUrl)
-    
-    // Converti l'immagine in base64 e salvala direttamente nel dish
+    // Leggi il file e mostra il cropper
     try {
       const reader = new FileReader()
       reader.onloadend = () => {
-        try {
-          const base64Image = reader.result as string
-          
-          // Salva l'immagine come base64 direttamente nel dish
-          // Questo permette di avere l'immagine persistente anche dopo il ricaricamento
-          // Sostituisce il blob URL temporaneo con il base64 permanente
-          updateDish(categoryIndex, dishIndex, "image", base64Image)
-          
-          setMessage("Immagine caricata con successo!")
-          setTimeout(() => setMessage(""), 3000)
-          
-          // Rilascia l'URL temporaneo dopo che è stato sostituito con il base64
-          // Aspettiamo un po' per assicurarci che il rendering del base64 sia completato
-          setTimeout(() => {
-            URL.revokeObjectURL(previewUrl)
-          }, 500)
-        } catch (error) {
-          console.error("Error processing image:", error)
-          setMessage("Errore durante l'elaborazione dell'immagine")
-          setTimeout(() => setMessage(""), 5000)
-          // In caso di errore, mantieni il blob URL temporaneo
-        }
+        const imageDataUrl = reader.result as string
+        // Mostra il cropper con l'immagine caricata
+        setCroppingImage({
+          image: imageDataUrl,
+          categoryIndex,
+          dishIndex
+        })
       }
       reader.onerror = () => {
         setMessage("Errore durante la lettura del file")
         setTimeout(() => setMessage(""), 5000)
-        // Non revocare il blob URL se c'è un errore, così l'utente può vedere l'anteprima
       }
       reader.readAsDataURL(file)
     } catch (error) {
-      console.error("Error uploading image:", error)
-      setMessage("Errore durante l'upload")
+      console.error("Error reading image:", error)
+      setMessage("Errore durante la lettura del file")
       setTimeout(() => setMessage(""), 5000)
-      // Non revocare il blob URL se c'è un errore
     }
+  }
+
+  const handleCropComplete = (croppedImage: string) => {
+    if (!croppingImage) return
+
+    const { categoryIndex, dishIndex } = croppingImage
+    
+    // Salva l'immagine ritagliata
+    updateDish(categoryIndex, dishIndex, "image", croppedImage)
+    setMessage("Immagine ritagliata e caricata con successo!")
+    setTimeout(() => setMessage(""), 3000)
+    
+    // Chiudi il cropper
+    setCroppingImage(null)
+  }
+
+  const handleCropCancel = () => {
+    setCroppingImage(null)
   }
 
   if (loading) {
@@ -617,6 +614,17 @@ export default function AdminAsportoPage() {
           )}
         </div>
       </div>
+
+      {/* Image Cropper Modal */}
+      {croppingImage && (
+        <ImageCropper
+          image={croppingImage.image}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+          aspectRatio={1} // Quadrato per le immagini dei piatti
+          cropShape="rect"
+        />
+      )}
     </main>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react"
+import { ArrowLeft, Save, Plus, Trash2, X } from "lucide-react"
 import Link from "next/link"
 
 interface AIKnowledge {
@@ -24,6 +24,12 @@ export default function AdminAIKnowledgePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
+  const [showClosingDayModal, setShowClosingDayModal] = useState(false)
+  const [showHolidayModal, setShowHolidayModal] = useState(false)
+  const [showEventModal, setShowEventModal] = useState(false)
+  const [newClosingDay, setNewClosingDay] = useState("")
+  const [newHoliday, setNewHoliday] = useState({ date: "", description: "" })
+  const [newEvent, setNewEvent] = useState({ date: "", description: "" })
   const router = useRouter()
 
   useEffect(() => {
@@ -67,11 +73,41 @@ export default function AdminAIKnowledgePage() {
     }
   }
 
+  const handleAddClosingDay = () => {
+    if (newClosingDay.trim()) {
+      setKnowledge({
+        ...knowledge,
+        closingDays: [...knowledge.closingDays, newClosingDay.trim()]
+      })
+      setNewClosingDay("")
+      setShowClosingDayModal(false)
+    }
+  }
+
+  const handleAddHoliday = () => {
+    if (newHoliday.date && newHoliday.description.trim()) {
+      setKnowledge({
+        ...knowledge,
+        holidays: [...knowledge.holidays, { ...newHoliday, description: newHoliday.description.trim() }]
+      })
+      setNewHoliday({ date: "", description: "" })
+      setShowHolidayModal(false)
+    }
+  }
+
+  const handleAddEvent = () => {
+    if (newEvent.date && newEvent.description.trim()) {
+      setKnowledge({
+        ...knowledge,
+        events: [...knowledge.events, { ...newEvent, description: newEvent.description.trim() }]
+      })
+      setNewEvent({ date: "", description: "" })
+      setShowEventModal(false)
+    }
+  }
+
   const addHoliday = () => {
-    setKnowledge({
-      ...knowledge,
-      holidays: [...knowledge.holidays, { date: "", description: "" }]
-    })
+    setShowHolidayModal(true)
   }
 
   const removeHoliday = (index: number) => {
@@ -86,10 +122,7 @@ export default function AdminAIKnowledgePage() {
   }
 
   const addEvent = () => {
-    setKnowledge({
-      ...knowledge,
-      events: [...knowledge.events, { date: "", description: "" }]
-    })
+    setShowEventModal(true)
   }
 
   const removeEvent = (index: number) => {
@@ -104,10 +137,7 @@ export default function AdminAIKnowledgePage() {
   }
 
   const addClosingDay = () => {
-    setKnowledge({
-      ...knowledge,
-      closingDays: [...knowledge.closingDays, ""]
-    })
+    setShowClosingDayModal(true)
   }
 
   const removeClosingDay = (index: number) => {
@@ -181,30 +211,34 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Giorni di Chiusura</h2>
               <button
                 onClick={addClosingDay}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
               </button>
             </div>
             <div className="space-y-2">
-              {knowledge.closingDays.map((day, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={day}
-                    onChange={(e) => updateClosingDay(index, e.target.value)}
-                    className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
-                    placeholder="Es: Lunedì"
-                  />
-                  <button
-                    onClick={() => removeClosingDay(index)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
+              {knowledge.closingDays.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nessun giorno di chiusura aggiunto</p>
+              ) : (
+                knowledge.closingDays.map((day, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={day}
+                      onChange={(e) => updateClosingDay(index, e.target.value)}
+                      className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
+                      placeholder="Es: Lunedì"
+                    />
+                    <button
+                      onClick={() => removeClosingDay(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -214,36 +248,40 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Festività</h2>
               <button
                 onClick={addHoliday}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
               </button>
             </div>
             <div className="space-y-4">
-              {knowledge.holidays.map((holiday, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="date"
-                    value={holiday.date}
-                    onChange={(e) => updateHoliday(index, "date", e.target.value)}
-                    className="px-4 py-2 bg-background border border-border rounded-lg"
-                  />
-                  <input
-                    type="text"
-                    value={holiday.description}
-                    onChange={(e) => updateHoliday(index, "description", e.target.value)}
-                    className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
-                    placeholder="Descrizione festività"
-                  />
-                  <button
-                    onClick={() => removeHoliday(index)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
+              {knowledge.holidays.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nessuna festività aggiunta</p>
+              ) : (
+                knowledge.holidays.map((holiday, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="date"
+                      value={holiday.date}
+                      onChange={(e) => updateHoliday(index, "date", e.target.value)}
+                      className="px-4 py-2 bg-background border border-border rounded-lg"
+                    />
+                    <input
+                      type="text"
+                      value={holiday.description}
+                      onChange={(e) => updateHoliday(index, "description", e.target.value)}
+                      className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
+                      placeholder="Descrizione festività"
+                    />
+                    <button
+                      onClick={() => removeHoliday(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -253,36 +291,40 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Eventi Speciali</h2>
               <button
                 onClick={addEvent}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
               </button>
             </div>
             <div className="space-y-4">
-              {knowledge.events.map((event, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="date"
-                    value={event.date}
-                    onChange={(e) => updateEvent(index, "date", e.target.value)}
-                    className="px-4 py-2 bg-background border border-border rounded-lg"
-                  />
-                  <input
-                    type="text"
-                    value={event.description}
-                    onChange={(e) => updateEvent(index, "description", e.target.value)}
-                    className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
-                    placeholder="Descrizione evento"
-                  />
-                  <button
-                    onClick={() => removeEvent(index)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
+              {knowledge.events.length === 0 ? (
+                <p className="text-muted-foreground text-sm">Nessun evento speciale aggiunto</p>
+              ) : (
+                knowledge.events.map((event, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      type="date"
+                      value={event.date}
+                      onChange={(e) => updateEvent(index, "date", e.target.value)}
+                      className="px-4 py-2 bg-background border border-border rounded-lg"
+                    />
+                    <input
+                      type="text"
+                      value={event.description}
+                      onChange={(e) => updateEvent(index, "description", e.target.value)}
+                      className="flex-1 px-4 py-2 bg-background border border-border rounded-lg"
+                      placeholder="Descrizione evento"
+                    />
+                    <button
+                      onClick={() => removeEvent(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -298,6 +340,189 @@ export default function AdminAIKnowledgePage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Giorni di Chiusura */}
+      {showClosingDayModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Aggiungi Giorno di Chiusura</h2>
+              <button
+                onClick={() => {
+                  setShowClosingDayModal(false)
+                  setNewClosingDay("")
+                }}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Giorno</label>
+                <input
+                  type="text"
+                  value={newClosingDay}
+                  onChange={(e) => setNewClosingDay(e.target.value)}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                  placeholder="Es: Lunedì, Martedì, ecc."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddClosingDay()
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowClosingDayModal(false)
+                    setNewClosingDay("")
+                  }}
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={handleAddClosingDay}
+                  disabled={!newClosingDay.trim()}
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Aggiungi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Festività */}
+      {showHolidayModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Aggiungi Festività</h2>
+              <button
+                onClick={() => {
+                  setShowHolidayModal(false)
+                  setNewHoliday({ date: "", description: "" })
+                }}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Data</label>
+                <input
+                  type="date"
+                  value={newHoliday.date}
+                  onChange={(e) => setNewHoliday({ ...newHoliday, date: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Descrizione</label>
+                <input
+                  type="text"
+                  value={newHoliday.description}
+                  onChange={(e) => setNewHoliday({ ...newHoliday, description: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                  placeholder="Es: Natale, Capodanno, ecc."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newHoliday.date && newHoliday.description.trim()) {
+                      handleAddHoliday()
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowHolidayModal(false)
+                    setNewHoliday({ date: "", description: "" })
+                  }}
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={handleAddHoliday}
+                  disabled={!newHoliday.date || !newHoliday.description.trim()}
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Aggiungi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Eventi Speciali */}
+      {showEventModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Aggiungi Evento Speciale</h2>
+              <button
+                onClick={() => {
+                  setShowEventModal(false)
+                  setNewEvent({ date: "", description: "" })
+                }}
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Data</label>
+                <input
+                  type="date"
+                  value={newEvent.date}
+                  onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Descrizione</label>
+                <input
+                  type="text"
+                  value={newEvent.description}
+                  onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                  className="w-full px-4 py-2 bg-background border border-border rounded-lg"
+                  placeholder="Es: Serata speciale, Evento live, ecc."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newEvent.date && newEvent.description.trim()) {
+                      handleAddEvent()
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setShowEventModal(false)
+                    setNewEvent({ date: "", description: "" })
+                  }}
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={handleAddEvent}
+                  disabled={!newEvent.date || !newEvent.description.trim()}
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Aggiungi
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
