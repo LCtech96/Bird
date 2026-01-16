@@ -41,7 +41,7 @@ export default function BookingPage() {
       `🕐 Orario: ${formData.time}\n\n` +
       `Grazie per la richiesta! Ti contatteremo presto per confermare la disponibilità.`
 
-    const phoneNumber = "393207279857"
+    const phoneNumber = "393203754312"
     const encodedMessage = encodeURIComponent(message)
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`
     

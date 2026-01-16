@@ -454,7 +454,7 @@ export function AIAssistant() {
     // Posizione/Indirizzo
     if (message.includes("dove") || message.includes("indirizzo") || message.includes("posizione") || message.includes("ubicazione") || message.includes("come arrivare")) {
       return {
-        message: "Ci troviamo a Terrasini, in Lungomare Peppino Impastato N1, Terrasini Favarotta. 🗺️ Siamo affacciati sul mare con una bellissima terrazza!",
+        message: "Ci troviamo a Terrasini, in Via Libertà, 169, 90049 Terrasini PA. 🗺️ Siamo affacciati sul mare con una bellissima terrazza!",
         hasBookingInterest: false
       }
     }
@@ -478,7 +478,7 @@ export function AIAssistant() {
     // Contatti
     if (message.includes("telefono") || message.includes("numero") || message.includes("contatto") || message.includes("chiamare")) {
       return {
-        message: "Puoi contattarci via WhatsApp al numero +39 320 727 9857. 📱 Siamo sempre disponibili per rispondere alle tue domande!",
+        message: "Puoi contattarci via WhatsApp al numero +39 320 375 4312. 📱 Siamo sempre disponibili per rispondere alle tue domande!",
         hasBookingInterest: false
       }
     }
@@ -616,7 +616,7 @@ export function AIAssistant() {
 
   const handleWhatsApp = () => {
     const summary = generateWhatsAppSummary()
-    const phoneNumber = "393207279857"
+    const phoneNumber = "393203754312"
     const encodedMessage = encodeURIComponent(summary)
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`
     window.open(whatsappUrl, "_blank")

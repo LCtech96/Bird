@@ -75,7 +75,7 @@ REGOLE:
 5. IMPORTANTE: Rispondi SEMPRE nella stessa lingua usata dal cliente. Se scrivono in inglese, rispondi in inglese. Se scrivono in italiano, rispondi in italiano. Se scrivono in francese, rispondi in francese, ecc.
 6. Usa "siamo aperti/chiusi" (non "siete") - quando rispondi in italiano.
 
-INFO: Bird Restaurant | Pesce siciliano | Lungomare Peppino Impastato N1, Terrasini | Ristorante/Asporto/Terrazza`
+INFO: Bird Restaurant | Pesce siciliano | Via Libertà, 169, 90049 Terrasini PA | Ristorante/Asporto/Terrazza`
 
 // Funzione per caricare la conoscenza AI dall'admin
 async function loadAIKnowledge() {

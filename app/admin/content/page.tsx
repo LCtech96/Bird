@@ -34,6 +34,14 @@ export default function AdminContentPage() {
   const [message, setMessage] = useState("")
   const [editingItem, setEditingItem] = useState<{ type: "video" | "image"; index: number } | null>(null)
   const router = useRouter()
+  const MAX_INLINE_VIDEO_BYTES = 6 * 1024 * 1024 // ~6MB base64 max per evitare 413
+  const MAX_UPLOAD_VIDEO_BYTES = 8 * 1024 * 1024 // ~8MB file max per upload diretto
+
+  const estimateBase64Bytes = (base64: string) => {
+    const cleaned = base64.split(",")[1] || base64
+    const padding = cleaned.endsWith("==") ? 2 : cleaned.endsWith("=") ? 1 : 0
+    return Math.floor((cleaned.length * 3) / 4) - padding
+  }
 
   useEffect(() => {
     loadContent()
@@ -57,10 +65,26 @@ export default function AdminContentPage() {
     setSaving(true)
     setMessage("")
     try {
+      const cleanedVideos = content.videos.map((video) => {
+        if (video.src?.startsWith("data:video")) {
+          const bytes = estimateBase64Bytes(video.src)
+          if (bytes > MAX_INLINE_VIDEO_BYTES) {
+            return { ...video, src: "" }
+          }
+        }
+        return video
+      })
+
+      if (cleanedVideos.some((v, i) => v.src === "" && content.videos[i]?.src?.startsWith("data:video"))) {
+        setMessage(
+          "Uno o più video sono troppo grandi per il salvataggio automatico. Caricali manualmente in /public/video e inserisci il percorso."
+        )
+      }
+
       const response = await fetch("/api/content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(content),
+        body: JSON.stringify({ ...content, videos: cleanedVideos }),
       })
 
       if (response.ok) {
@@ -434,6 +458,15 @@ export default function AdminContentPage() {
                                 onChange={(e) => {
                                   const file = e.target.files?.[0]
                                   if (file) {
+                                    if (file.size > MAX_UPLOAD_VIDEO_BYTES) {
+                                      const manualPath = `/video/${file.name}`
+                                      updateVideo(index, "src", manualPath)
+                                      setMessage(
+                                        "Video troppo grande per l'upload automatico. Caricalo manualmente in /public/video e usa il percorso."
+                                      )
+                                      setTimeout(() => setMessage(""), 5000)
+                                      return
+                                    }
                                     const reader = new FileReader()
                                     reader.onloadend = async () => {
                                       const base64Video = reader.result as string

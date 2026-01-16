@@ -36,11 +36,11 @@ export default function AdminAsportoPage() {
       const response = await fetch("/api/menu")
       if (response.ok) {
         const data = await response.json()
-        if (data.length > 0) {
-          setCategories(data)
-        } else {
-          // Se non ci sono dati salvati, carica i dati dalla pagina pubblica
-          setCategories(menuCategoriesFromPublic)
+        // Usa sempre i dati della pagina pubblica per sostituire il menu esistente
+        setCategories(menuCategoriesFromPublic)
+        if (Array.isArray(data) && data.length > 0) {
+          setMessage("Menu aggiornato con i dati della pagina pubblica. Premi Salva per applicare.")
+          setTimeout(() => setMessage(""), 4000)
         }
       } else {
         // Se c'è un errore, carica i dati dalla pagina pubblica

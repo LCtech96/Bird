@@ -24,7 +24,7 @@ export function Footer() {
               <span>Facebook</span>
             </button>
             <a
-              href="https://wa.me/393207279857"
+              href="https://wa.me/393203754312"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"

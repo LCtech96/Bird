@@ -19,7 +19,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Salva il video come base64 in Supabase
+    const estimateBase64Bytes = (base64: string) => {
+      const cleaned = base64.split(",")[1] || base64
+      const padding = cleaned.endsWith("==") ? 2 : cleaned.endsWith("=") ? 1 : 0
+      return Math.floor((cleaned.length * 3) / 4) - padding
+    }
+
+    const maxInlineBytes = 6 * 1024 * 1024 // ~6MB
+    if (estimateBase64Bytes(videoData) > maxInlineBytes) {
+      return NextResponse.json(
+        { error: "Video troppo grande. Caricalo manualmente in /public/video e inserisci il percorso." },
+        { status: 413 }
+      )
+    }
+
+    // Salva il video come base64 in Supabase (solo per file piccoli)
     if (supabaseServer) {
       const { error } = await supabaseServer
         .from("admin_data")
