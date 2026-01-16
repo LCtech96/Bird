@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X } from "lucide-react"
+import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X, Search } from "lucide-react"
 import Link from "next/link"
 import { defaultMenuCategories } from "@/lib/menu-data-default"
 import { menuCategoriesFromPublic } from "@/lib/menu-data-from-public"
@@ -22,9 +22,11 @@ interface Category {
 
 export default function AdminAsportoPage() {
   const [categories, setCategories] = useState<Category[]>([])
+  const [allCategories, setAllCategories] = useState<Category[]>([]) // Mantiene tutti i dati originali
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function AdminAsportoPage() {
       if (response.ok) {
         const data = await response.json()
         // Usa sempre i dati della pagina pubblica per sostituire il menu esistente
+        setAllCategories(menuCategoriesFromPublic)
         setCategories(menuCategoriesFromPublic)
         if (Array.isArray(data) && data.length > 0) {
           setMessage("Menu aggiornato con i dati della pagina pubblica. Premi Salva per applicare.")
@@ -44,16 +47,60 @@ export default function AdminAsportoPage() {
         }
       } else {
         // Se c'è un errore, carica i dati dalla pagina pubblica
+        setAllCategories(menuCategoriesFromPublic)
         setCategories(menuCategoriesFromPublic)
       }
     } catch (error) {
       console.error("Error loading menu:", error)
       // In caso di errore, carica i dati dalla pagina pubblica
+      setAllCategories(menuCategoriesFromPublic)
       setCategories(menuCategoriesFromPublic)
     } finally {
       setLoading(false)
     }
   }
+
+  // Funzione per filtrare le categorie e i piatti in base alla ricerca
+  const filterCategories = (query: string) => {
+    if (!query.trim()) {
+      setCategories(allCategories)
+      return
+    }
+
+    const searchLower = query.toLowerCase().trim()
+    const filtered: Category[] = []
+
+    allCategories.forEach((category) => {
+      const categoryTitleLower = category.title.toLowerCase()
+      
+      // Controlla se la query corrisponde al titolo della categoria
+      const matchesCategory = categoryTitleLower.includes(searchLower)
+      
+      // Filtra i piatti che corrispondono alla query
+      const filteredDishes = category.dishes.filter((dish) => {
+        const dishNameLower = dish.name.toLowerCase()
+        return dishNameLower.includes(searchLower)
+      })
+
+      // Se la categoria corrisponde O se ci sono piatti che corrispondono
+      if (matchesCategory || filteredDishes.length > 0) {
+        filtered.push({
+          ...category,
+          // Se la query corrisponde alla categoria, mostra tutti i piatti
+          // Altrimenti mostra solo i piatti filtrati
+          dishes: matchesCategory ? category.dishes : filteredDishes
+        })
+      }
+    })
+
+    setCategories(filtered)
+  }
+
+  // Aggiorna il filtro quando cambia la query di ricerca
+  useEffect(() => {
+    filterCategories(searchQuery)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
 
   const saveMenu = async () => {
     setSaving(true)
@@ -91,6 +138,7 @@ export default function AdminAsportoPage() {
 
       if (response.ok) {
         // Aggiorna lo stato locale con i dati puliti
+        setAllCategories(cleanedCategories)
         setCategories(cleanedCategories)
         setMessage("Menu salvato con successo!")
         setTimeout(() => setMessage(""), 3000)
@@ -106,43 +154,118 @@ export default function AdminAsportoPage() {
 
   const updateDish = (categoryIndex: number, dishIndex: number, field: keyof Dish, value: string | boolean) => {
     const newCategories = [...categories]
+    const newAllCategories = [...allCategories]
+    
+    // Trova l'indice originale della categoria in allCategories
+    const categoryTitle = newCategories[categoryIndex].title
+    const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === categoryTitle)
+    
+    if (originalCategoryIndex !== -1) {
+      // Trova l'indice originale del piatto
+      const dishName = newCategories[categoryIndex].dishes[dishIndex].name
+      const originalDishIndex = newAllCategories[originalCategoryIndex].dishes.findIndex(
+        d => d.name === dishName
+      )
+      
+      if (originalDishIndex !== -1) {
+        // Aggiorna anche in allCategories
+        newAllCategories[originalCategoryIndex].dishes[originalDishIndex] = {
+          ...newAllCategories[originalCategoryIndex].dishes[originalDishIndex],
+          [field]: value,
+        }
+      }
+    }
+    
+    // Aggiorna in categories
     newCategories[categoryIndex].dishes[dishIndex] = {
       ...newCategories[categoryIndex].dishes[dishIndex],
       [field]: value,
     }
+    
+    setAllCategories(newAllCategories)
     setCategories(newCategories)
   }
 
   const addDish = (categoryIndex: number) => {
     const newCategories = [...categories]
-    newCategories[categoryIndex].dishes.push({
+    const newAllCategories = [...allCategories]
+    
+    const newDish = {
       name: "Nuovo Piatto",
       description: "",
       price: "€0.00",
       visible: true,
-    })
+    }
+    
+    newCategories[categoryIndex].dishes.push(newDish)
+    
+    // Trova e aggiorna anche in allCategories
+    const categoryTitle = newCategories[categoryIndex].title
+    const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === categoryTitle)
+    if (originalCategoryIndex !== -1) {
+      newAllCategories[originalCategoryIndex].dishes.push(newDish)
+    }
+    
+    setAllCategories(newAllCategories)
     setCategories(newCategories)
   }
 
   const removeDish = (categoryIndex: number, dishIndex: number) => {
     if (confirm("Vuoi rimuovere questo piatto?")) {
       const newCategories = [...categories]
+      const newAllCategories = [...allCategories]
+      
+      const dishName = newCategories[categoryIndex].dishes[dishIndex].name
       newCategories[categoryIndex].dishes.splice(dishIndex, 1)
+      
+      // Rimuovi anche da allCategories
+      const categoryTitle = newCategories[categoryIndex].title
+      const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === categoryTitle)
+      if (originalCategoryIndex !== -1) {
+        const originalDishIndex = newAllCategories[originalCategoryIndex].dishes.findIndex(
+          d => d.name === dishName
+        )
+        if (originalDishIndex !== -1) {
+          newAllCategories[originalCategoryIndex].dishes.splice(originalDishIndex, 1)
+        }
+      }
+      
+      setAllCategories(newAllCategories)
       setCategories(newCategories)
     }
   }
 
   const removeCategory = (categoryIndex: number) => {
     if (confirm("Vuoi rimuovere questa categoria e tutti i suoi piatti?")) {
+      const categoryTitle = categories[categoryIndex].title
       const newCategories = categories.filter((_, index) => index !== categoryIndex)
+      const newAllCategories = allCategories.filter(cat => cat.title !== categoryTitle)
+      setAllCategories(newAllCategories)
       setCategories(newCategories)
     }
   }
 
   const toggleVisibility = (categoryIndex: number, dishIndex: number) => {
     const newCategories = [...categories]
+    const newAllCategories = [...allCategories]
+    
     const dish = newCategories[categoryIndex].dishes[dishIndex]
     dish.visible = !dish.visible
+    
+    // Aggiorna anche in allCategories
+    const categoryTitle = newCategories[categoryIndex].title
+    const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === categoryTitle)
+    if (originalCategoryIndex !== -1) {
+      const dishName = dish.name
+      const originalDishIndex = newAllCategories[originalCategoryIndex].dishes.findIndex(
+        d => d.name === dishName
+      )
+      if (originalDishIndex !== -1) {
+        newAllCategories[originalCategoryIndex].dishes[originalDishIndex].visible = dish.visible
+      }
+    }
+    
+    setAllCategories(newAllCategories)
     setCategories(newCategories)
   }
 
@@ -249,6 +372,38 @@ export default function AdminAsportoPage() {
           </div>
         )}
 
+        {/* Barra di ricerca */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cerca per categoria (es. 'primi di pesce') o nome piatto (es. 'spaghetti')..."
+              className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-accent rounded"
+                title="Pulisci ricerca"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              {categories.length === 0 
+                ? "Nessun risultato trovato" 
+                : categories.length === 1 && categories[0].dishes.length === 1
+                ? `1 risultato trovato`
+                : `${categories.reduce((acc, cat) => acc + cat.dishes.length, 0)} risultati trovati`}
+            </p>
+          )}
+        </div>
+
         <div className="space-y-8">
           {categories.length === 0 && (
             <div className="bg-card border border-border rounded-xl p-8 text-center">
@@ -271,7 +426,17 @@ export default function AdminAsportoPage() {
                   value={category.title}
                   onChange={(e) => {
                     const newCategories = [...categories]
+                    const newAllCategories = [...allCategories]
+                    const oldTitle = newCategories[categoryIndex].title
                     newCategories[categoryIndex].title = e.target.value
+                    
+                    // Aggiorna anche in allCategories
+                    const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === oldTitle)
+                    if (originalCategoryIndex !== -1) {
+                      newAllCategories[originalCategoryIndex].title = e.target.value
+                    }
+                    
+                    setAllCategories(newAllCategories)
                     setCategories(newCategories)
                   }}
                   className="text-2xl font-bold bg-transparent border-b-2 border-transparent hover:border-border focus:border-primary focus:outline-none pb-2 flex-1"
@@ -437,15 +602,19 @@ export default function AdminAsportoPage() {
             </div>
           ))}
           
-          <button
-            onClick={() => {
-              setCategories([...categories, { title: "Nuova Categoria", dishes: [] }])
-            }}
-            className="w-full py-4 border-2 border-dashed border-border rounded-xl hover:bg-accent/50 transition-colors flex items-center justify-center gap-2 text-lg"
-          >
-            <Plus className="w-6 h-6" />
-            <span>Aggiungi Categoria</span>
-          </button>
+          {!searchQuery && (
+            <button
+              onClick={() => {
+                const newCategory = { title: "Nuova Categoria", dishes: [] }
+                setAllCategories([...allCategories, newCategory])
+                setCategories([...categories, newCategory])
+              }}
+              className="w-full py-4 border-2 border-dashed border-border rounded-xl hover:bg-accent/50 transition-colors flex items-center justify-center gap-2 text-lg"
+            >
+              <Plus className="w-6 h-6" />
+              <span>Aggiungi Categoria</span>
+            </button>
+          )}
         </div>
       </div>
     </main>
