@@ -6,8 +6,8 @@ INSERT INTO admin_data (key, value, updated_at)
 VALUES (
   'admin_credentials',
   '{
-    "email": "barinellocity@gmail.com",
-    "password": "123456789Robetro"
+    "email": "birdgardenterrasini@icloud.com",
+    "password": "password123456789Bird"
   }'::jsonb,
   NOW()
 )

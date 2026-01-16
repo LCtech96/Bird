@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { supabaseServer } from "@/lib/supabase-server"
 
-const ADMIN_EMAIL = "barinellocity@gmail.com"
-const ADMIN_PASSWORD = "123456789Robetro"
+const ADMIN_EMAIL = "birdgardenterrasini@icloud.com"
+const ADMIN_PASSWORD = "password123456789Bird"
 
 // Funzione per caricare le credenziali da Supabase (se disponibili)
 async function loadAdminCredentials() {
