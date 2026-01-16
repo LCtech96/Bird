@@ -1,20 +1,25 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
+import Image from "next/image"
+import { menuCategoriesFromPublic } from "@/lib/menu-data-from-public"
 
 type MenuItem = {
   name: string
   description?: string
   price?: string
+  image?: string
+  visible?: boolean
 }
 
 type MenuCategory = {
   title: string
   items: MenuItem[]
+  dishes?: MenuItem[] // Supporto per struttura admin (dishes) e pubblica (items)
 }
 
 export default function AsportoPage() {
@@ -28,28 +33,66 @@ export default function AsportoPage() {
         "Pizze"
       ])
   )
+  const [categories, setCategories] = useState<MenuCategory[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const categories = useMemo<MenuCategory[]>(
-    () => [
-      {
-        title: "Piatto del giorno",
-        items: [
-          {
-            name: "Per il piatto del giorno chiedere al maître di sala",
-            description: "For the dish of the day ask the maître hall"
-          }
-        ]
-      },
-      {
-        title: "Spritz",
-        items: [
-          { name: "Aperol Spritz", description: "Aperol, Prosecco, soda", price: "€ 8,00" },
-          { name: "Campari Spritz", description: "Campari, Prosecco, soda", price: "€ 8,00" },
-          { name: "Hugo Spritz", description: "Prosecco, St. Germain, soda", price: "€ 9,00" },
-          { name: "Italicus Spritz", description: "Prosecco, Italicus Bergomotto", price: "€ 9,00" },
-          { name: "Sarti Spritz", description: "Sarti, Prosecco, soda", price: "€ 9,00" }
-        ]
-      },
+  useEffect(() => {
+    loadMenu()
+  }, [])
+
+  const loadMenu = async () => {
+    try {
+      const response = await fetch("/api/menu", {
+        cache: "no-store"
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (Array.isArray(data) && data.length > 0) {
+          // Converti la struttura admin (dishes) alla struttura pubblica (items)
+          const convertedCategories = data.map((cat: any) => ({
+            title: cat.title,
+            items: (cat.dishes || cat.items || []).filter((item: any) => item.visible !== false)
+          }))
+          setCategories(convertedCategories)
+        } else {
+          // Fallback: usa i dati della pagina pubblica
+          setCategories(menuCategoriesFromPublic.map(cat => ({
+            title: cat.title,
+            items: cat.dishes.filter(dish => dish.visible !== false)
+          })))
+        }
+      } else {
+        // Fallback: usa i dati della pagina pubblica
+        setCategories(menuCategoriesFromPublic.map(cat => ({
+          title: cat.title,
+          items: cat.dishes.filter(dish => dish.visible !== false)
+        })))
+      }
+    } catch (error) {
+      console.error("Error loading menu:", error)
+      // Fallback: usa i dati della pagina pubblica
+      setCategories(menuCategoriesFromPublic.map(cat => ({
+        title: cat.title,
+        items: cat.dishes.filter(dish => dish.visible !== false)
+      })))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Navigation />
+        <div className="container mx-auto px-4 py-24 md:py-32">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-muted-foreground">Caricamento menu...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
       {
         title: "Aperitivi",
         items: [
@@ -360,19 +403,46 @@ export default function AsportoPage() {
                         {cat.items.map((item, idx) => (
                           <div
                             key={`${cat.title}-${idx}`}
-                            className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 p-3 rounded-lg hover:bg-accent/30 transition-colors"
+                            className="flex flex-col md:flex-row gap-4 p-3 rounded-lg hover:bg-accent/30 transition-colors"
                           >
-                            <div className="flex-1">
-                              <h3 className="text-base md:text-lg font-semibold">{item.name}</h3>
-                              {item.description ? (
-                                <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                            {/* Immagine del piatto (se presente) */}
+                            {item.image && (
+                              <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border border-border">
+                                {item.image.startsWith("data:image") ? (
+                                  // Se è base64, usa img normale
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  // Se è un percorso URL, usa Next.js Image
+                                  <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    width={128}
+                                    height={128}
+                                    className="w-full h-full object-cover"
+                                    unoptimized={item.image.startsWith("/")}
+                                  />
+                                )}
+                              </div>
+                            )}
+                            
+                            {/* Informazioni del piatto */}
+                            <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                              <div className="flex-1">
+                                <h3 className="text-base md:text-lg font-semibold">{item.name}</h3>
+                                {item.description ? (
+                                  <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                                ) : null}
+                              </div>
+                              {item.price ? (
+                                <div className="flex-shrink-0">
+                                  <span className="text-base md:text-lg font-bold text-foreground">{item.price}</span>
+                                </div>
                               ) : null}
                             </div>
-                            {item.price ? (
-                              <div className="flex-shrink-0">
-                                <span className="text-base md:text-lg font-bold text-foreground">{item.price}</span>
-                              </div>
-                            ) : null}
                           </div>
                         ))}
                       </div>
