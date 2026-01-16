@@ -33,14 +33,14 @@ export function Footer() {
               <span>WhatsApp</span>
             </a>
           </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Created by{" "}
+          <div className="text-center mt-8 pt-6 border-t border-border">
+            <p className="text-base md:text-lg font-medium" style={{ fontFamily: 'var(--font-montserrat)' }}>
+              Creato da{" "}
               <a
-                href="https://facevoice.ai/home"
+                href="https://www.facevoice.ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline"
+                className="text-primary hover:underline font-semibold transition-colors"
               >
                 facevoice.ai
               </a>

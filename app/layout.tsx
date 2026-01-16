@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google"
+import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/ThemeProvider"
 
@@ -15,6 +15,12 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   display: "swap"
 })
+const montserrat = Montserrat({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-montserrat",
+  display: "swap"
+})
 
 export const metadata: Metadata = {
   title: "Bird Restaurant - Cucina di Pesce a Terrasini",
@@ -28,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it" suppressHydrationWarning>
-      <body className={`${inter.className} ${playfair.variable} ${cormorant.variable} relative`}>
+      <body className={`${inter.className} ${playfair.variable} ${cormorant.variable} ${montserrat.variable} relative`}>
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-gradient-to-b from-muted/20 to-background" />
         <div className="relative z-10 min-h-screen">
           <ThemeProvider
