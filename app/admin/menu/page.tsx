@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X, Search } from "lucide-react"
+import { ArrowLeft, Plus, Trash2, Eye, EyeOff, Save, Upload, X, Search, ChevronDown, ChevronUp } from "lucide-react"
 import Link from "next/link"
-import { defaultMenuCategories } from "@/lib/menu-data-default"
 import { menuCategoriesFromPublic } from "@/lib/menu-data-from-public"
 import { ImageCropper } from "@/components/ImageCropper"
 
@@ -29,6 +28,7 @@ export default function AdminAsportoPage() {
   const [message, setMessage] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
   const [croppingImage, setCroppingImage] = useState<{ image: string; categoryIndex: number; dishIndex: number } | null>(null)
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const router = useRouter()
 
   useEffect(() => {
@@ -37,29 +37,41 @@ export default function AdminAsportoPage() {
 
   const loadMenu = async () => {
     try {
-      const response = await fetch("/api/menu")
+      const response = await fetch("/api/menu", { cache: "no-store" })
       if (response.ok) {
         const data = await response.json()
-        // Usa sempre i dati della pagina pubblica per sostituire il menu esistente
-        setAllCategories(menuCategoriesFromPublic)
-        setCategories(menuCategoriesFromPublic)
+        // Usa i dati salvati dal DB (stesso ordine e immagini della pagina pubblica)
         if (Array.isArray(data) && data.length > 0) {
-          setMessage("Menu aggiornato con i dati della pagina pubblica. Premi Salva per applicare.")
-          setTimeout(() => setMessage(""), 4000)
+          setAllCategories(data)
+          setCategories(data)
+          setExpandedCategories(new Set(data.map((c: Category) => c.title)))
+        } else {
+          setAllCategories(menuCategoriesFromPublic)
+          setCategories(menuCategoriesFromPublic)
+          setExpandedCategories(new Set(menuCategoriesFromPublic.map(c => c.title)))
         }
       } else {
-        // Se c'è un errore, carica i dati dalla pagina pubblica
         setAllCategories(menuCategoriesFromPublic)
         setCategories(menuCategoriesFromPublic)
+        setExpandedCategories(new Set(menuCategoriesFromPublic.map(c => c.title)))
       }
     } catch (error) {
       console.error("Error loading menu:", error)
-      // In caso di errore, carica i dati dalla pagina pubblica
       setAllCategories(menuCategoriesFromPublic)
       setCategories(menuCategoriesFromPublic)
+      setExpandedCategories(new Set(menuCategoriesFromPublic.map(c => c.title)))
     } finally {
       setLoading(false)
     }
+  }
+
+  const toggleCategory = (title: string) => {
+    setExpandedCategories(prev => {
+      const next = new Set(prev)
+      if (next.has(title)) next.delete(title)
+      else next.add(title)
+      return next
+    })
   }
 
   // Funzione per filtrare le categorie e i piatti in base alla ricerca
@@ -415,39 +427,58 @@ export default function AdminAsportoPage() {
               </button>
             </div>
           )}
-          {categories.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="bg-card border border-border rounded-xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <input
-                  type="text"
-                  value={category.title}
-                  onChange={(e) => {
-                    const newCategories = [...categories]
-                    const newAllCategories = [...allCategories]
-                    const oldTitle = newCategories[categoryIndex].title
-                    newCategories[categoryIndex].title = e.target.value
-                    
-                    // Aggiorna anche in allCategories
-                    const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === oldTitle)
-                    if (originalCategoryIndex !== -1) {
-                      newAllCategories[originalCategoryIndex].title = e.target.value
-                    }
-                    
-                    setAllCategories(newAllCategories)
-                    setCategories(newCategories)
-                  }}
-                  className="text-2xl font-bold bg-transparent border-b-2 border-transparent hover:border-border focus:border-primary focus:outline-none pb-2 flex-1"
-                />
+          {categories.map((category, categoryIndex) => {
+            const isExpanded = expandedCategories.has(category.title)
+            return (
+            <div key={category.title + categoryIndex} className="bg-card border border-border rounded-xl overflow-hidden">
+              {/* Intestazione macrocategoria (click per aprire/chiudere) */}
+              <div className="flex items-center gap-2 p-4">
                 <button
-                  onClick={() => removeCategory(categoryIndex)}
-                  className="ml-4 p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
+                  type="button"
+                  onClick={() => toggleCategory(category.title)}
+                  className="flex-1 flex items-center justify-between hover:bg-accent/50 rounded-lg transition-colors text-left min-w-0"
+                  aria-expanded={isExpanded}
+                >
+                  <input
+                    type="text"
+                    value={category.title}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      const newCategories = [...categories]
+                      const newAllCategories = [...allCategories]
+                      const oldTitle = newCategories[categoryIndex].title
+                      newCategories[categoryIndex].title = e.target.value
+                      const originalCategoryIndex = newAllCategories.findIndex(cat => cat.title === oldTitle)
+                      if (originalCategoryIndex !== -1) {
+                        newAllCategories[originalCategoryIndex].title = e.target.value
+                      }
+                      setAllCategories(newAllCategories)
+                      setCategories(newCategories)
+                      setExpandedCategories(prev => {
+                        const next = new Set(prev)
+                        next.delete(oldTitle)
+                        next.add(e.target.value)
+                        return next
+                      })
+                    }}
+                    className="text-xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 flex-1 min-w-0 py-1"
+                  />
+                  <span className="flex-shrink-0 text-muted-foreground ml-2">
+                    {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  </span>
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); removeCategory(categoryIndex) }}
+                  className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors flex-shrink-0"
                   title="Rimuovi categoria"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              
-              <div className="space-y-4">
+
+              {/* Piatti (visibili quando la categoria è aperta) */}
+              {isExpanded && (
+              <div className="border-t border-border p-4 md:p-6 space-y-4">
                 {category.dishes.map((dish, dishIndex) => (
                   <div
                     key={dishIndex}
@@ -459,64 +490,39 @@ export default function AdminAsportoPage() {
                       {/* Immagine */}
                       <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-2">Immagine</label>
-                        <div className="relative">
-                          {dish.image ? (
-                            <div className="relative w-full h-24 rounded overflow-hidden bg-muted">
-                              {(dish.image.startsWith('data:image') || dish.image.startsWith('blob:')) ? (
-                                // Se è un'immagine base64 o un blob URL temporaneo, usala direttamente
-                                <img 
-                                  src={dish.image} 
-                                  alt={dish.name} 
-                                  className="w-full h-24 object-cover rounded"
-                                  onError={(e) => {
-                                    // Se anche il blob URL fallisce, mostra placeholder
-                                    const target = e.target as HTMLImageElement
-                                    target.style.display = 'none'
-                                    const parent = target.parentElement
-                                    if (parent && !parent.querySelector('.image-placeholder')) {
-                                      const placeholder = document.createElement('div')
-                                      placeholder.className = 'image-placeholder w-full h-24 bg-muted rounded flex flex-col items-center justify-center text-muted-foreground'
-                                      placeholder.innerHTML = `
-                                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="text-xs">Errore caricamento</span>
-                                      `
-                                      parent.appendChild(placeholder)
-                                    }
-                                  }}
-                                />
-                              ) : (
-                                // Se è un percorso, prova a caricarlo
-                                <img 
-                                  src={dish.image} 
-                                  alt={dish.name} 
-                                  className="w-full h-24 object-cover rounded"
-                                  onError={(e) => {
-                                    // Se l'immagine non può essere caricata, mostra un placeholder
-                                    const target = e.target as HTMLImageElement
-                                    target.style.display = 'none'
-                                    const parent = target.parentElement
-                                    if (parent && !parent.querySelector('.image-placeholder')) {
-                                      const placeholder = document.createElement('div')
-                                      placeholder.className = 'image-placeholder w-full h-24 bg-muted rounded flex flex-col items-center justify-center text-muted-foreground'
-                                      placeholder.innerHTML = `
-                                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="text-xs">Immagine non trovata</span>
-                                      `
-                                      parent.appendChild(placeholder)
-                                    }
-                                  }}
-                                />
-                              )}
-                            </div>
-                          ) : (
-                            <div className="w-full h-24 bg-muted rounded flex items-center justify-center">
-                              <Upload className="w-6 h-6 text-muted-foreground" />
-                            </div>
-                          )}
+                        <label className="relative block w-full aspect-square max-w-[120px] rounded-lg border border-border bg-muted/50 overflow-hidden cursor-pointer group">
+                          {dish.image && (dish.image.startsWith("data:image") || dish.image.startsWith("blob:")) ? (
+                            <img
+                              src={dish.image}
+                              alt={dish.name}
+                              className="w-full h-full object-cover rounded-lg"
+                              onError={(e) => {
+                                const el = e.target as HTMLImageElement
+                                el.style.display = "none"
+                                const ph = el.nextElementSibling
+                                if (ph) (ph as HTMLElement).style.display = "flex"
+                              }}
+                            />
+                          ) : dish.image ? (
+                            <img
+                              src={dish.image}
+                              alt={dish.name}
+                              className="w-full h-full object-cover rounded-lg"
+                              onError={(e) => {
+                                const el = e.target as HTMLImageElement
+                                el.style.display = "none"
+                                const ph = el.nextElementSibling
+                                if (ph) (ph as HTMLElement).style.display = "flex"
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground gap-1 bg-muted/50 rounded-lg"
+                            style={{ display: dish.image ? "none" : "flex" }}
+                          >
+                            <Upload className="w-6 h-6" />
+                            <span className="text-xs">Carica</span>
+                          </div>
                           <input
                             type="file"
                             accept="image/*"
@@ -524,9 +530,9 @@ export default function AdminAsportoPage() {
                               const file = e.target.files?.[0]
                               if (file) handleImageUpload(categoryIndex, dishIndex, file)
                             }}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
-                        </div>
+                        </label>
                       </div>
 
                       {/* Nome */}
@@ -576,13 +582,13 @@ export default function AdminAsportoPage() {
                             <EyeOff className="w-5 h-5 text-destructive" />
                           )}
                         </button>
-                        <button
-                          onClick={() => removeDish(categoryIndex, dishIndex)}
-                          className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
-                          title="Rimuovi"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                <button
+                  onClick={() => removeDish(categoryIndex, dishIndex)}
+                  className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
+                  title="Rimuovi"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
                       </div>
                     </div>
                   </div>
@@ -596,8 +602,10 @@ export default function AdminAsportoPage() {
                   <span>Aggiungi Piatto</span>
                 </button>
               </div>
+              )}
             </div>
-          ))}
+          )
+          })}
           
           {!searchQuery && (
             <button
