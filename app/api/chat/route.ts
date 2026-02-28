@@ -96,7 +96,7 @@ async function loadAIKnowledge() {
     
     // Fallback: restituisci dati di default
     return {
-      openingHours: "07:00 - 01:00",
+      openingHours: "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì.",
       closingDays: [],
       holidays: [],
       events: [],
@@ -105,7 +105,7 @@ async function loadAIKnowledge() {
   } catch (error) {
     console.error("Error loading AI knowledge:", error)
     return {
-      openingHours: "07:00 - 01:00",
+      openingHours: "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì.",
       closingDays: [],
       holidays: [],
       events: [],

@@ -22,7 +22,7 @@ INSERT INTO admin_data (key, value, updated_at)
 VALUES (
   'ai_knowledge',
   '{
-    "openingHours": "07:00 - 01:00",
+    "openingHours": "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì.",
     "closingDays": [],
     "holidays": [],
     "events": [],

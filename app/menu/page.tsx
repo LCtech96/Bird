@@ -112,10 +112,11 @@ export default function AsportoPage() {
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Menù</h1>
             <div className="mt-6 text-lg text-muted-foreground whitespace-pre-line">
-              Lunedì-Venerdì 18:30 23:30{'\n'}
-              Sabato 18:30 00:00{'\n'}
-              Domenica 12:30 15:00{'\n'}
-              18:30 23:30
+              Martedì-Venerdì 19:00-23:00{'\n'}
+              Sabato 19:00-23:30{'\n'}
+              Domenica 12:30-15:00{'\n'}
+              19:00-23:30{'\n'}
+              Chiuso Lunedì
             </div>
           </div>
 

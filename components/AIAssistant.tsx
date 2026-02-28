@@ -41,7 +41,7 @@ export function AIAssistant() {
   const [isLoading, setIsLoading] = useState(false)
   const [hasBookingInterest, setHasBookingInterest] = useState(false)
   const [aiKnowledge, setAiKnowledge] = useState<AIKnowledge>({
-    openingHours: "07:00 - 01:00",
+    openingHours: "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì.",
     closingDays: [],
     holidays: [],
     events: [],
@@ -132,26 +132,25 @@ export function AIAssistant() {
     
     // Orari
     if (message.includes("orari") || message.includes("orario") || message.includes("aperto") || message.includes("chiuso") || message.includes("siete aperti") || message.includes("aprite") || message.includes("chiudete")) {
-      const openingHours = knowledge.openingHours || "07:00 - 01:00"
+      const openingHours = knowledge.openingHours || "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì."
       const now = new Date()
       const hour = now.getHours()
       const minute = now.getMinutes()
       const currentTime = hour * 60 + minute
       
-      // Parse orari (formato: "07:00 - 01:00" o simile)
-      const [openTime, closeTime] = openingHours.split(" - ").map(time => {
-        const [h, m] = time.split(":").map(Number)
-        return h * 60 + (m || 0)
-      })
-      
-      // Se l'orario di chiusura è minore di quello di apertura, significa che chiude il giorno dopo
-      const isOpen = closeTime < openTime 
-        ? (currentTime >= openTime || currentTime < closeTime)
-        : (currentTime >= openTime && currentTime < closeTime)
-      
-      // Verifica giorni di chiusura
       const today = now.toLocaleDateString("it-IT", { weekday: "long" }).toLowerCase()
       const isClosingDay = knowledge.closingDays?.some(day => day.toLowerCase() === today)
+      const isMonday = today === "lunedì"
+      let isOpen = false
+      if (!isMonday && !isClosingDay) {
+        if (today === "sabato") {
+          isOpen = (currentTime >= 19 * 60 && currentTime < 23 * 60 + 30)
+        } else if (today === "domenica") {
+          isOpen = (currentTime >= 12 * 60 + 30 && currentTime < 15 * 60) || (currentTime >= 19 * 60 && currentTime < 23 * 60 + 30)
+        } else {
+          isOpen = (currentTime >= 19 * 60 && currentTime < 23 * 60)
+        }
+      }
       
       // Verifica festività (formato: "DD/MM" o "DD-MM" o "YYYY-MM-DD")
       const todayStr = now.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" })
@@ -172,8 +171,8 @@ export function AIAssistant() {
       })
       
       let statusMessage = ""
-      if (isClosingDay || isHoliday) {
-        const reason = isClosingDay ? "giorno di chiusura settimanale" : "festività"
+      if (isClosingDay || isHoliday || isMonday) {
+        const reason = isMonday ? "lunedì" : isClosingDay ? "giorno di chiusura settimanale" : "festività"
         statusMessage = `Oggi siamo chiusi (${reason}). `
       } else if (isOpen) {
         statusMessage = "Siamo aperti! 🕐 "
@@ -181,7 +180,9 @@ export function AIAssistant() {
         statusMessage = "Al momento siamo chiusi. "
       }
       
-      const hoursMessage = `Siamo aperti dalle ${openingHours.split(" - ")[0]} alle ${openingHours.split(" - ")[1]} del mattino successivo.`
+      const hoursMessage = openingHours.includes(" - ") && !openingHours.includes(",")
+        ? `Siamo aperti dalle ${openingHours.split(" - ")[0]} alle ${openingHours.split(" - ")[1]}.`
+        : `Orari: ${openingHours}`
       
       let eventMessage = ""
       if (hasEvent && todayEvent) {
@@ -226,12 +227,12 @@ export function AIAssistant() {
       
       if (isSummer) {
         return {
-          message: "La cucina chiude fino alla chiusura del ristorante (01:00 del mattino successivo) durante il periodo estivo. 🍽️",
+          message: "La cucina chiude con il ristorante (23:00 Mar-Ven, 23:30 Sab e Dom). 🍽️",
           hasBookingInterest: false
         }
       } else {
         return {
-          message: "La cucina chiude intorno alle 23:00 durante il periodo invernale. 🍽️",
+          message: "La cucina chiude con il ristorante (23:00 Mar-Ven, 23:30 Sab e Dom). 🍽️",
           hasBookingInterest: false
         }
       }

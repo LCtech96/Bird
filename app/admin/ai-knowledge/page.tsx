@@ -15,7 +15,7 @@ interface AIKnowledge {
 
 export default function AdminAIKnowledgePage() {
   const [knowledge, setKnowledge] = useState<AIKnowledge>({
-    openingHours: "07:00 - 01:00",
+    openingHours: "Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30. Chiuso Lunedì.",
     closingDays: [],
     holidays: [],
     events: [],
@@ -201,7 +201,7 @@ export default function AdminAIKnowledgePage() {
               value={knowledge.openingHours}
               onChange={(e) => setKnowledge({ ...knowledge, openingHours: e.target.value })}
               className="w-full px-4 py-2 bg-background border border-border rounded-lg"
-              placeholder="07:00 - 01:00"
+              placeholder="Martedì-Venerdì 19:00-23:00, Sabato 19:00-23:30, Domenica 12:30-15:00 e 19:00-23:30"
             />
           </div>
 
@@ -211,7 +211,8 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Giorni di Chiusura</h2>
               <button
                 onClick={addClosingDay}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                type="button"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
@@ -248,7 +249,8 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Festività</h2>
               <button
                 onClick={addHoliday}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                type="button"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
@@ -291,7 +293,8 @@ export default function AdminAIKnowledgePage() {
               <h2 className="text-xl font-bold">Eventi Speciali</h2>
               <button
                 onClick={addEvent}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                type="button"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors cursor-pointer active:scale-95"
               >
                 <Plus className="w-4 h-4" />
                 <span>Aggiungi</span>
@@ -343,7 +346,15 @@ export default function AdminAIKnowledgePage() {
 
       {/* Modal Giorni di Chiusura */}
       {showClosingDayModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowClosingDayModal(false)
+              setNewClosingDay("")
+            }
+          }}
+        >
           <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Aggiungi Giorno di Chiusura</h2>
@@ -352,7 +363,8 @@ export default function AdminAIKnowledgePage() {
                   setShowClosingDayModal(false)
                   setNewClosingDay("")
                 }}
-                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                type="button"
+                className="p-2 hover:bg-accent rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -379,14 +391,16 @@ export default function AdminAIKnowledgePage() {
                     setShowClosingDayModal(false)
                     setNewClosingDay("")
                   }}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                  type="button"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 >
                   Annulla
                 </button>
                 <button
                   onClick={handleAddClosingDay}
                   disabled={!newClosingDay.trim()}
-                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Aggiungi
                 </button>
@@ -398,7 +412,15 @@ export default function AdminAIKnowledgePage() {
 
       {/* Modal Festività */}
       {showHolidayModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowHolidayModal(false)
+              setNewHoliday({ date: "", description: "" })
+            }
+          }}
+        >
           <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Aggiungi Festività</h2>
@@ -407,7 +429,8 @@ export default function AdminAIKnowledgePage() {
                   setShowHolidayModal(false)
                   setNewHoliday({ date: "", description: "" })
                 }}
-                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                type="button"
+                className="p-2 hover:bg-accent rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -443,14 +466,16 @@ export default function AdminAIKnowledgePage() {
                     setShowHolidayModal(false)
                     setNewHoliday({ date: "", description: "" })
                   }}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                  type="button"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 >
                   Annulla
                 </button>
                 <button
                   onClick={handleAddHoliday}
                   disabled={!newHoliday.date || !newHoliday.description.trim()}
-                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Aggiungi
                 </button>
@@ -462,7 +487,15 @@ export default function AdminAIKnowledgePage() {
 
       {/* Modal Eventi Speciali */}
       {showEventModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowEventModal(false)
+              setNewEvent({ date: "", description: "" })
+            }
+          }}
+        >
           <div className="bg-card border border-border rounded-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Aggiungi Evento Speciale</h2>
@@ -471,7 +504,8 @@ export default function AdminAIKnowledgePage() {
                   setShowEventModal(false)
                   setNewEvent({ date: "", description: "" })
                 }}
-                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                type="button"
+                className="p-2 hover:bg-accent rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -507,14 +541,16 @@ export default function AdminAIKnowledgePage() {
                     setShowEventModal(false)
                     setNewEvent({ date: "", description: "" })
                   }}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
+                  type="button"
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 >
                   Annulla
                 </button>
                 <button
                   onClick={handleAddEvent}
                   disabled={!newEvent.date || !newEvent.description.trim()}
-                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   Aggiungi
                 </button>
