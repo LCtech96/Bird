@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import Cropper from "react-easy-crop"
 import { X, Check } from "lucide-react"
 
@@ -22,6 +22,33 @@ export function ImageCropper({
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null)
+  const [cropperImageUrl, setCropperImageUrl] = useState<string>(() =>
+    image.startsWith("data:") ? "" : image
+  )
+
+  // Su mobile i data URL lunghi non si caricano bene nel Cropper: converti in object URL
+  useEffect(() => {
+    if (!image) return
+    if (!image.startsWith("data:")) {
+      setCropperImageUrl(image)
+      return
+    }
+    let objectUrl: string | null = null
+    const init = async () => {
+      try {
+        const res = await fetch(image)
+        const blob = await res.blob()
+        objectUrl = URL.createObjectURL(blob)
+        setCropperImageUrl(objectUrl)
+      } catch {
+        setCropperImageUrl(image)
+      }
+    }
+    init()
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [image])
 
   const onCropChange = useCallback((crop: { x: number; y: number }) => {
     setCrop(crop)
@@ -40,17 +67,18 @@ export function ImageCropper({
 
   const createImage = (url: string): Promise<HTMLImageElement> =>
     new Promise((resolve, reject) => {
-      const image = new Image()
-      image.addEventListener("load", () => resolve(image))
-      image.addEventListener("error", (error) => reject(error))
-      image.src = url
+      const img = new Image()
+      img.crossOrigin = "anonymous"
+      img.addEventListener("load", () => resolve(img))
+      img.addEventListener("error", (error) => reject(error))
+      img.src = url
     })
 
   const getCroppedImg = async (
     imageSrc: string,
     pixelCrop: { x: number; y: number; width: number; height: number }
   ): Promise<string> => {
-    const image = await createImage(imageSrc)
+    const img = await createImage(imageSrc)
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
 
@@ -58,13 +86,11 @@ export function ImageCropper({
       throw new Error("No 2d context")
     }
 
-    // Imposta le dimensioni del canvas
     canvas.width = pixelCrop.width
     canvas.height = pixelCrop.height
 
-    // Disegna l'immagine ritagliata
     ctx.drawImage(
-      image,
+      img,
       pixelCrop.x,
       pixelCrop.y,
       pixelCrop.width,
@@ -75,7 +101,6 @@ export function ImageCropper({
       pixelCrop.height
     )
 
-    // Converti in base64
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
@@ -95,10 +120,19 @@ export function ImageCropper({
   }
 
   const handleCrop = async () => {
-    if (!croppedAreaPixels) return
-
+    const imageToUse = cropperImageUrl || image
     try {
-      const croppedImage = await getCroppedImg(image, croppedAreaPixels)
+      let pixelCrop = croppedAreaPixels
+      if (!pixelCrop) {
+        const img = await createImage(imageToUse)
+        pixelCrop = {
+          x: 0,
+          y: 0,
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        }
+      }
+      const croppedImage = await getCroppedImg(imageToUse, pixelCrop)
       onCropComplete(croppedImage)
     } catch (error) {
       console.error("Error cropping image:", error)
@@ -119,25 +153,30 @@ export function ImageCropper({
           </button>
         </div>
 
-        {/* Cropper */}
-        <div className="relative flex-1 min-h-[400px] max-h-[60vh] bg-black">
-          <Cropper
-            image={image}
-            crop={crop}
-            zoom={zoom}
-            aspect={aspectRatio}
-            cropShape={cropShape}
-            onCropChange={onCropChange}
-            onZoomChange={onZoomChange}
-            onCropComplete={onCropCompleteCallback}
-            style={{
-              containerStyle: {
-                width: "100%",
-                height: "100%",
-                position: "relative"
-              }
-            }}
-          />
+        {/* Cropper: altezza fissa così l'immagine si vede anche su mobile */}
+        <div className="relative w-full h-[min(60vh,400px)] min-h-[280px] bg-muted flex items-center justify-center">
+          {cropperImageUrl ? (
+            <Cropper
+              image={cropperImageUrl}
+              crop={crop}
+              zoom={zoom}
+              aspect={aspectRatio}
+              cropShape={cropShape}
+              onCropChange={onCropChange}
+              onZoomChange={onZoomChange}
+              onCropComplete={onCropCompleteCallback}
+              style={{
+                containerStyle: {
+                  width: "100%",
+                  height: "100%",
+                  position: "relative",
+                  backgroundColor: "var(--muted)"
+                }
+              }}
+            />
+          ) : (
+            <p className="text-muted-foreground">Caricamento immagine...</p>
+          )}
         </div>
 
         {/* Controls */}
