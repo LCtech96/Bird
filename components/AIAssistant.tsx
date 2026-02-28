@@ -34,7 +34,7 @@ export function AIAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Ciao! 👋 Sono l'assistente del Bird Restaurant. Come posso aiutarti oggi?",
+      content: "Ciao! 👋 Sono il concierge del Bird Restaurant. Posso darti informazioni su orari, menù e prenotazioni. Come posso aiutarti?",
     },
   ])
   const [input, setInput] = useState("")
@@ -125,7 +125,7 @@ export function AIAssistant() {
     // Saluti
     if (message.match(/^(ciao|salve|buongiorno|buonasera|buon pomeriggio|hey|hi)$/)) {
       return {
-        message: "Ciao! 👋 Benvenuto al Bird Restaurant. Come posso aiutarti?",
+        message: "Ciao! 👋 Benvenuto al Bird Restaurant. Posso darti informazioni su orari, menù e prenotazioni. Come posso aiutarti?",
         hasBookingInterest: false
       }
     }
@@ -582,7 +582,7 @@ export function AIAssistant() {
       setMessages([
         {
           role: "assistant",
-          content: "Ciao! 👋 Sono l'assistente del Bird Restaurant. Come posso aiutarti oggi?",
+          content: "Ciao! 👋 Sono il concierge del Bird Restaurant. Posso darti informazioni su orari, menù e prenotazioni. Come posso aiutarti?",
         },
       ])
       setHasBookingInterest(false)
