@@ -4,32 +4,44 @@ import { Footer } from "@/components/Footer"
 import { WaitlistForm } from "./WaitlistForm"
 
 export const metadata: Metadata = {
-  title: "Nomadiqe - Waitlist | Piattaforma per Ospitalità, B&B, Case Vacanze, Hotel",
-  description: "Nomadiqe è la piattaforma per il settore ospitalità: gestione prenotazioni, transfer, noleggio auto, pulizie, forniture ingrosso. Per B&B, case vacanze, ville, hotel, residence, affittacamera. Airbnb e Booking a basse commissioni. Iscriviti alla waitlist.",
+  title: "Nomadiqe - Waitlist | Ospitalità, Creator, Influencer Travel, Lifestyle, Beauty, Luxury",
+  description: "Nomadiqe: piattaforma per ospitalità, host e content creator. Influencer travel, lifestyle, beauty, luxury: collaborazioni, viaggiare gratis, opportunità di lavoro. Host: pubblicità e sponsorizzazioni anche gratuite. B&B, case vacanze, hotel. Iscriviti alla waitlist.",
   keywords: [
     "Nomadiqe",
+    "content creator",
+    "influencer",
+    "influencer travel",
+    "influencer lifestyle",
+    "influencer beauty",
+    "influencer luxury",
+    "collaborazioni creator",
+    "viaggiare gratis",
+    "opportunità di lavoro",
+    "host",
+    "pubblicità gratuita",
+    "sponsorizzazioni",
     "ospitalità",
     "transfer",
     "noleggio auto",
     "pulizie",
     "forniture ingrosso",
-    "casa",
     "B&B",
-    "bed and breakfast",
     "case vacanze",
     "ville",
     "hotel",
     "residence",
-    "affittacamera",
     "airbnb a basse commissioni",
     "booking a basse commissioni",
-    "prenotazioni",
-    "turismo",
-    "alloggi",
+    "travel",
+    "lifestyle",
+    "beauty",
+    "luxury",
+    "partnership",
+    "press trip",
   ],
   openGraph: {
-    title: "Nomadiqe - Waitlist | Ospitalità, B&B, Case Vacanze",
-    description: "La piattaforma Nomadiqe per il settore ospitalità. Transfer, noleggio, pulizie, forniture. Iscriviti alla waitlist.",
+    title: "Nomadiqe - Waitlist | Creator, Influencer, Host, Ospitalità",
+    description: "Content creator e influencer travel, lifestyle, beauty, luxury: collaborazioni e viaggi. Host: pubblicità anche gratuita. Iscriviti alla waitlist Nomadiqe.",
   },
   alternates: { canonical: "/waitlist" },
 }
@@ -60,7 +72,7 @@ export default function WaitlistPage() {
         aria-hidden="true"
       >
         <p>
-          Nomadiqe piattaforma settore ospitalità. Servizi transfer, noleggio auto, pulizie professionali, forniture ingrosso per la casa. Soluzioni per B&B, bed and breakfast, case vacanze, ville, hotel, residence, affittacamera. Prenotazioni con Airbnb a basse commissioni, Booking a basse commissioni. Gestione alloggi turistici, strutture ricettive, appartamenti vacanza, agriturismi, dimore storiche. Nomadiqe per operatori turismo, property manager, host. Servizi trasferimenti aeroporto, autonoleggio, housekeeping, forniture per strutture ricettive. Piattaforma prenotazioni alternative a basso costo, commissioni ridotte per B&B e case vacanze.
+          Nomadiqe piattaforma settore ospitalità. Servizi transfer, noleggio auto, pulizie professionali, forniture ingrosso per la casa. Soluzioni per B&B, bed and breakfast, case vacanze, ville, hotel, residence, affittacamera. Airbnb e Booking a basse commissioni. Content creator che cercano collaborazioni: Nomadiqe connette creator e influencer. Influencer travel, influencer lifestyle, influencer beauty, influencer luxury possono viaggiare gratis o trovare opportunità di lavoro. Collaborazioni con strutture, soggiorni in cambio di contenuti, press trip, partnership. Gli host che vogliono pubblicità possono riceverla anche gratuitamente tramite collaborazioni con creator e influencer. Influencer marketing per hotel, B&B, case vacanze. Opportunità per content creator, creator travel, lifestyle, beauty, luxury. Property manager, alloggi turistici, strutture ricettive, sponsorizzazioni host, baratto soggiorno, collaborazione influencer hotel.
         </p>
       </section>
 
@@ -71,7 +83,7 @@ export default function WaitlistPage() {
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "Nomadiqe",
-            description: "Piattaforma per il settore ospitalità: B&B, case vacanze, hotel, residence, transfer, noleggio auto, pulizie, forniture. Prenotazioni a basse commissioni.",
+            description: "Nomadiqe: piattaforma per ospitalità, host e content creator. Influencer travel, lifestyle, beauty, luxury: collaborazioni, viaggiare gratis, opportunità. Host: pubblicità e sponsorizzazioni anche gratuite. B&B, case vacanze, hotel.",
             url: "https://birdterrasini.com/waitlist",
             publisher: {
               "@type": "Organization",
