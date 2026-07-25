@@ -9,7 +9,6 @@ import { ArrowLeft, Facebook, Instagram, Volume2, VolumeX } from "lucide-react"
 /** Aggiungi qui i nuovi video (file in public/videos/) */
 const CHI_SIAMO_VIDEOS = [
   { id: "1", src: "/videos/chi-siamo-1.mp4" },
-  { id: "2", src: "/videos/chi-siamo-2.mp4" },
 ] as const
 
 const INSTAGRAM_URL = "https://www.instagram.com/birdgardenterrasini"
@@ -108,7 +107,7 @@ export default function ChiSiamoPage() {
             ))}
           </div>
           <p className="mt-3 text-center text-xs text-muted-foreground md:hidden">
-            Scorri per vedere gli altri video
+            {CHI_SIAMO_VIDEOS.length > 1 ? "Scorri per vedere gli altri video" : null}
           </p>
         </section>
 
