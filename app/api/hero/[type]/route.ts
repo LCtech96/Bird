@@ -3,14 +3,13 @@ import { supabaseServer } from "@/lib/supabase-server"
 
 /**
  * Serve cover/profile come file immagine (non base64 nel JSON).
- * Così la home scarica un JSON leggero e le foto in parallelo come asset normali.
  */
 export async function GET(
   _request: NextRequest,
-  context: { params: Promise<{ type: string }> }
+  context: { params: { type: string } }
 ) {
   try {
-    const { type } = await context.params
+    const { type } = context.params
     if (type !== "cover" && type !== "profile") {
       return NextResponse.json({ error: "Tipo non valido" }, { status: 400 })
     }
@@ -28,7 +27,7 @@ export async function GET(
 
     let imageData: string | undefined = data?.value?.imageData
 
-    if ((error || !imageData) && supabaseServer) {
+    if (error || !imageData) {
       const { data: contentData } = await supabaseServer
         .from("admin_data")
         .select("value")
@@ -42,10 +41,9 @@ export async function GET(
       return new NextResponse(null, { status: 404 })
     }
 
-    // data:image/jpeg;base64,.... oppure solo base64
     let mime = "image/jpeg"
     let b64 = imageData
-    const match = imageData.match(/^data:([^;]+);base64,(.+)$/s)
+    const match = imageData.match(/^data:([^;]+);base64,([\s\S]+)$/)
     if (match) {
       mime = match[1] || mime
       b64 = match[2]

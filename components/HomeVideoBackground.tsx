@@ -13,18 +13,27 @@ export function HomeVideoBackground() {
     const start = () => {
       if (!cancelled) setReady(true)
     }
-    // Dopo idle / un frame: priorità al testo e alla UI
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(start, { timeout: 1500 })
-      return () => {
-        cancelled = true
-        window.cancelIdleCallback(id)
-      }
+
+    let idleId: number | undefined
+    let timeoutId: ReturnType<typeof setTimeout> | undefined
+
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+      cancelIdleCallback?: (id: number) => void
     }
-    const t = window.setTimeout(start, 400)
+
+    if (typeof w.requestIdleCallback === "function") {
+      idleId = w.requestIdleCallback(start, { timeout: 1500 })
+    } else {
+      timeoutId = setTimeout(start, 400)
+    }
+
     return () => {
       cancelled = true
-      window.clearTimeout(t)
+      if (idleId !== undefined && typeof w.cancelIdleCallback === "function") {
+        w.cancelIdleCallback(idleId)
+      }
+      if (timeoutId !== undefined) clearTimeout(timeoutId)
     }
   }, [])
 
@@ -33,7 +42,6 @@ export function HomeVideoBackground() {
       className="fixed inset-0 z-0 overflow-hidden pointer-events-none"
       aria-hidden="true"
     >
-      {/* Gradiente subito (first paint) */}
       <div className="absolute inset-0 bg-gradient-to-b from-muted/40 via-background to-background" />
       {ready && (
         <video
