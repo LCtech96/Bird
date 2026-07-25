@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { requireAuth } from "@/lib/auth"
+import { requireAuth, isAuthenticated } from "@/lib/auth"
 import { supabaseServer } from "@/lib/supabase-server"
 import { defaultMenuCategories } from "@/lib/menu-data-default"
 
 // GET - Carica il menu
 export async function GET() {
   try {
-    // Prova a caricare da Supabase
+    let menu = defaultMenuCategories
+
     if (supabaseServer) {
       const { data, error } = await supabaseServer
         .from("admin_data")
@@ -15,16 +16,36 @@ export async function GET() {
         .single()
 
       if (!error && data && data.value && Array.isArray(data.value) && data.value.length > 0) {
-        // Restituisci solo i dati salvati (non fare merge con default per evitare vecchi piatti)
-        return NextResponse.json(data.value)
+        menu = data.value
       }
     }
-    
-    // Fallback: restituisci i dati di default con tutte le categorie
-    return NextResponse.json(defaultMenuCategories)
+
+    const admin = await isAuthenticated()
+
+    // Pubblico: niente base64 (payload leggero). Admin: menu completo.
+    const payload = admin
+      ? menu
+      : menu.map((cat: any) => ({
+          title: cat.title,
+          dishes: (cat.dishes || cat.items || []).map((dish: any) => {
+            const { image, ...rest } = dish
+            const lightImage =
+              image && typeof image === "string" && !image.startsWith("data:")
+                ? image
+                : undefined
+            return { ...rest, ...(lightImage ? { image: lightImage } : {}) }
+          }),
+        }))
+
+    return NextResponse.json(payload, {
+      headers: {
+        "Cache-Control": admin
+          ? "private, no-store"
+          : "public, s-maxage=60, stale-while-revalidate=300",
+      },
+    })
   } catch (error) {
     console.error("Error loading menu:", error)
-    // In caso di errore, restituisci i dati di default
     return NextResponse.json(defaultMenuCategories)
   }
 }
