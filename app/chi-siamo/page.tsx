@@ -1,22 +1,46 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import Link from "next/link"
 import { ArrowLeft, Facebook, Instagram, Volume2, VolumeX } from "lucide-react"
 
-/** Aggiungi qui i nuovi video (file in public/videos/) */
-const CHI_SIAMO_VIDEOS = [
-  { id: "1", src: "/videos/chi-siamo-1.mp4" },
-] as const
+/** Video in public/videos/ (1 = già presente, 2–21 = nuovi) */
+const CHI_SIAMO_VIDEOS = Array.from({ length: 21 }, (_, i) => ({
+  id: String(i + 1),
+  src: `/videos/chi-siamo-${i + 1}.mp4`,
+}))
 
 const INSTAGRAM_URL = "https://www.instagram.com/birdgardenterrasini"
 const FACEBOOK_URL = "https://www.facebook.com/search/top?q=Bird%20Garden%20Terrasini"
 
 function ReelCard({ src, index }: { src: string; index: number }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const cardRef = useRef<HTMLElement>(null)
   const [muted, setMuted] = useState(true)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = cardRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => setInView(!!e?.isIntersecting),
+      { threshold: 0.55 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (inView) {
+      v.play().catch(() => {})
+    } else {
+      v.pause()
+    }
+  }, [inView])
 
   const toggleMute = () => {
     const v = videoRef.current
@@ -27,6 +51,7 @@ function ReelCard({ src, index }: { src: string; index: number }) {
 
   return (
     <article
+      ref={cardRef}
       className="relative shrink-0 w-[78vw] max-w-[320px] sm:w-[280px] snap-center"
       style={{ scrollSnapAlign: "center" }}
     >
@@ -35,12 +60,11 @@ function ReelCard({ src, index }: { src: string; index: number }) {
           ref={videoRef}
           src={src}
           className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
           muted
           loop
           playsInline
-          preload={index === 0 ? "auto" : "metadata"}
-          aria-label={`Video Chi Siamo ${index + 1}`}
+          preload={index < 2 ? "metadata" : "none"}
+          aria-label={`Video virale ${index + 1}`}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10" />
         <button
@@ -62,8 +86,7 @@ export default function ChiSiamoPage() {
       <Navigation />
 
       <div className="pt-20 pb-8 md:pt-28 md:pb-16">
-        {/* Intro — max 2 righe di senso + CTA social */}
-        <header className="px-5 max-w-lg mx-auto text-center mb-8 md:mb-12">
+        <header className="px-5 max-w-lg mx-auto text-center mb-8 md:mb-10">
           <h1
             className="text-[2rem] leading-tight md:text-5xl font-bold tracking-tight mb-4"
             style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -97,17 +120,21 @@ export default function ChiSiamoPage() {
           </div>
         </header>
 
-        {/* Reel strip — stile Instagram / iOS */}
-        <section className="relative" aria-label="Video dello staff">
-          <div
-            className="flex gap-4 overflow-x-auto px-[11vw] sm:px-8 md:justify-center md:px-6 pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        <section className="relative" aria-label="I nostri video più virali">
+          <h2
+            className="px-5 text-center text-xl md:text-2xl font-semibold tracking-tight mb-5 md:mb-6"
+            style={{ fontFamily: "var(--font-playfair), serif" }}
           >
+            I nostri video più virali
+          </h2>
+
+          <div className="flex gap-4 overflow-x-auto px-[11vw] sm:px-8 md:px-10 pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {CHI_SIAMO_VIDEOS.map((video, index) => (
               <ReelCard key={video.id} src={video.src} index={index} />
             ))}
           </div>
-          <p className="mt-3 text-center text-xs text-muted-foreground md:hidden">
-            {CHI_SIAMO_VIDEOS.length > 1 ? "Scorri per vedere gli altri video" : null}
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Scorri per vedere gli altri video
           </p>
         </section>
 
