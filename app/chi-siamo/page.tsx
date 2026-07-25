@@ -6,10 +6,13 @@ import { Footer } from "@/components/Footer"
 import Link from "next/link"
 import { ArrowLeft, Facebook, Instagram, Volume2, VolumeX } from "lucide-react"
 
-/** Video in public/videos/ (1 = già presente, 2–21 = nuovi) */
+const SUPABASE_VIDEO_BASE =
+  "https://cgrygpojgnkcdpbwligf.supabase.co/storage/v1/object/public/chi-siamo-videos"
+
+/** 21 reel ospitati su Supabase Storage (non nel deploy Vercel) */
 const CHI_SIAMO_VIDEOS = Array.from({ length: 21 }, (_, i) => ({
   id: String(i + 1),
-  src: `/videos/chi-siamo-${i + 1}.mp4`,
+  src: `${SUPABASE_VIDEO_BASE}/chi-siamo-${i + 1}.mp4`,
 }))
 
 const INSTAGRAM_URL = "https://www.instagram.com/birdgardenterrasini"
