@@ -51,13 +51,14 @@ export function AIAssistant() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
-  // Carica le informazioni dall'admin e il menu al mount
+  // Carica conoscenza AI e menu solo quando si apre la chat (non al primo paint)
   useEffect(() => {
+    if (!isOpen) return
+    let cancelled = false
     const loadData = async () => {
-      // Carica AI Knowledge
       try {
         const response = await fetch("/api/ai-knowledge")
-        if (response.ok) {
+        if (response.ok && !cancelled) {
           const data = await response.json()
           setAiKnowledge(data)
         }
@@ -65,32 +66,32 @@ export function AIAssistant() {
         console.error("Error loading AI knowledge:", error)
       }
 
-      // Carica Menu
       try {
         const menuResponse = await fetch("/api/menu")
+        if (cancelled) return
         if (menuResponse.ok) {
           const menuData = await menuResponse.json()
           if (menuData && Array.isArray(menuData) && menuData.length > 0) {
             setMenuCategories(menuData)
           } else {
-            // Usa dati di default se non ci sono dati salvati
             const { defaultMenuCategories } = await import("@/lib/menu-data-default")
-            setMenuCategories(defaultMenuCategories)
+            if (!cancelled) setMenuCategories(defaultMenuCategories)
           }
         } else {
-          // Usa dati di default in caso di errore
           const { defaultMenuCategories } = await import("@/lib/menu-data-default")
-          setMenuCategories(defaultMenuCategories)
+          if (!cancelled) setMenuCategories(defaultMenuCategories)
         }
       } catch (error) {
         console.error("Error loading menu:", error)
-        // Usa dati di default in caso di errore
         const { defaultMenuCategories } = await import("@/lib/menu-data-default")
-        setMenuCategories(defaultMenuCategories)
+        if (!cancelled) setMenuCategories(defaultMenuCategories)
       }
     }
     loadData()
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [isOpen])
 
   // Funzione per trovare una categoria nel menu
   const findCategory = (searchTerms: string[]): Category | null => {

@@ -3,7 +3,7 @@ import { Inter, Playfair_Display, Cormorant_Garamond, Montserrat } from "next/fo
 import "./globals.css"
 import { ThemeProvider } from "@/components/ThemeProvider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], display: "swap" })
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -11,13 +11,13 @@ const playfair = Playfair_Display({
 })
 const cormorant = Cormorant_Garamond({ 
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600"],
   variable: "--font-cormorant",
   display: "swap"
 })
 const montserrat = Montserrat({ 
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
   variable: "--font-montserrat",
   display: "swap"
 })
