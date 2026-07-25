@@ -67,28 +67,63 @@ function editDistance(a: string, b: string): number {
   return dp[m][n]
 }
 
-function fuzzyIncludes(haystack: string, needle: string): boolean {
-  if (!needle) return true
-  if (haystack.includes(needle)) return true
-  const words = haystack.split(" ").filter(Boolean)
-  const tokens = needle.split(" ").filter((t) => t.length > 1)
-  if (tokens.length === 0) return haystack.includes(needle)
-  return tokens.every((token) =>
-    words.some((word) => {
-      if (word.includes(token) || token.includes(word)) return true
-      const maxErr = token.length <= 4 ? 1 : 2
-      return editDistance(word, token) <= maxErr
-    })
-  )
+/** Espansioni per termini generici (es. "pasta" → formati pasta) */
+const SEARCH_SYNONYMS: Record<string, string[]> = {
+  pasta: [
+    "spaghetti",
+    "pennette",
+    "farfalle",
+    "risotto",
+    "carbonara",
+    "scoglio",
+    "vongole",
+    "primi",
+  ],
+  primo: ["primi", "pasta", "spaghetti", "pennette", "farfalle", "risotto"],
+  primi: ["pasta", "spaghetti", "pennette", "farfalle", "risotto"],
+  pizza: ["pizze", "margherita", "calzone", "sfincionella", "covaccini", "schiacciate"],
+  pizze: ["pizza", "margherita", "calzone"],
+  pesce: ["mare", "cozze", "vongole", "gamberi", "polpo", "salmone", "tonno", "scoglio"],
+  carne: ["filetto", "bresaola", "prosciutto", "salsiccia", "pollo", "ragù"],
+  dolce: ["dessert", "tiramisu", "gelato", "torta", "frutta"],
+  dolci: ["dessert", "tiramisu", "gelato", "torta"],
+  vino: ["prosecco", "birra", "digestivi", "spritz", "aperitivi"],
+  birra: ["birre", "spina"],
+}
+
+/** Match token↔parola: substring solo se abbastanza lungo; typo solo su parole simili */
+function tokenMatchesWord(word: string, token: string): boolean {
+  if (!word || !token) return false
+  if (word === token) return true
+  // substring: la parola contiene il token (min 3 char) oppure viceversa solo se entrambi lunghi
+  if (token.length >= 3 && word.includes(token)) return true
+  if (word.length >= 4 && token.length >= 4 && token.includes(word)) return true
+  // typo: lunghezze vicine, max 1–2 errori, token abbastanza lungo
+  if (Math.abs(word.length - token.length) > 2) return false
+  if (token.length < 4) return false
+  const maxErr = token.length <= 5 ? 1 : 2
+  return editDistance(word, token) <= maxErr
+}
+
+function tokenMatchesHaystack(haystack: string, token: string): boolean {
+  if (haystack.includes(token)) return true
+  const words = haystack.split(" ").filter((w) => w.length > 1)
+  return words.some((word) => tokenMatchesWord(word, token))
 }
 
 function dishMatches(item: MenuItem, categoryTitle: string, query: string): boolean {
   const q = normalize(query)
   if (!q) return true
-  const blob = normalize(
-    `${categoryTitle} ${item.name} ${item.description || ""} ${item.price || ""}`
-  )
-  return fuzzyIncludes(blob, q)
+  const queryTokens = q.split(" ").filter((t) => t.length > 1)
+  if (queryTokens.length === 0) return true
+
+  const blob = normalize(`${categoryTitle} ${item.name} ${item.description || ""}`)
+
+  // Ogni parola cercata deve matchare (AND); i sinonimi di quella parola sono in OR
+  return queryTokens.every((token) => {
+    const variants = [token, ...(SEARCH_SYNONYMS[token] || []).map(normalize)]
+    return variants.some((variant) => tokenMatchesHaystack(blob, variant))
+  })
 }
 
 function MenuReel({ src }: { src: string }) {
