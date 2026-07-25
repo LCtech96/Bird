@@ -24,13 +24,12 @@ type MenuCategory = {
 const SUPABASE_MENU_VIDEOS =
   "https://cgrygpojgnkcdpbwligf.supabase.co/storage/v1/object/public/menu-videos"
 
-/** Video inseriti dopo alcune macrocategorie */
-const MENU_REELS: { after: string; src: string; label: string }[] = [
-  { after: "Antipasti di carne", src: `${SUPABASE_MENU_VIDEOS}/menu-1.mp4`, label: "Antipasti" },
-  { after: "Primi", src: `${SUPABASE_MENU_VIDEOS}/menu-2.mp4`, label: "Primi" },
-  { after: "Secondi di carne", src: `${SUPABASE_MENU_VIDEOS}/menu-3.mp4`, label: "Secondi" },
-  { after: "Pizze", src: `${SUPABASE_MENU_VIDEOS}/menu-4.mp4`, label: "Pizze" },
-  { after: "Dessert", src: `${SUPABASE_MENU_VIDEOS}/menu-5.mp4`, label: "Dolci" },
+const MENU_REELS: string[] = [
+  `${SUPABASE_MENU_VIDEOS}/menu-1.mp4`,
+  `${SUPABASE_MENU_VIDEOS}/menu-2.mp4`,
+  `${SUPABASE_MENU_VIDEOS}/menu-3.mp4`,
+  `${SUPABASE_MENU_VIDEOS}/menu-4.mp4`,
+  `${SUPABASE_MENU_VIDEOS}/menu-5.mp4`,
 ]
 
 const INSTAGRAM_POST = "https://www.instagram.com/p/DXPfboiMOa0/"
@@ -92,7 +91,7 @@ function dishMatches(item: MenuItem, categoryTitle: string, query: string): bool
   return fuzzyIncludes(blob, q)
 }
 
-function MenuReel({ src, label }: { src: string; label: string }) {
+function MenuReel({ src }: { src: string }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const [muted, setMuted] = useState(true)
@@ -103,7 +102,7 @@ function MenuReel({ src, label }: { src: string; label: string }) {
     if (!el) return
     const obs = new IntersectionObserver(
       ([e]) => setInView(!!e?.isIntersecting),
-      { threshold: 0.4 }
+      { threshold: 0.35 }
     )
     obs.observe(el)
     return () => obs.disconnect()
@@ -117,8 +116,8 @@ function MenuReel({ src, label }: { src: string; label: string }) {
   }, [inView])
 
   return (
-    <div ref={wrapRef} className="my-4 flex justify-center">
-      <div className="relative w-full max-w-[280px] aspect-[9/16] rounded-2xl overflow-hidden bg-black shadow-lg ring-1 ring-border">
+    <div ref={wrapRef} className="flex-shrink-0 w-[160px] sm:w-[180px]">
+      <div className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden bg-black shadow-lg ring-1 ring-border">
         <video
           ref={videoRef}
           src={src}
@@ -127,11 +126,8 @@ function MenuReel({ src, label }: { src: string; label: string }) {
           loop
           playsInline
           preload="none"
-          aria-label={`Video ${label}`}
+          aria-label="Video dal menù Bird"
         />
-        <div className="absolute top-3 left-3 text-xs font-medium text-white/90 bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
-          {label}
-        </div>
         <button
           type="button"
           onClick={() => {
@@ -151,9 +147,7 @@ function MenuReel({ src, label }: { src: string; label: string }) {
 }
 
 export default function AsportoPage() {
-  const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set(["Aperitivi", "Antipasti di pesce", "Antipasti di carne", "Primi", "Pizze"])
-  )
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [categories, setCategories] = useState<MenuCategory[]>(INITIAL_CATEGORIES)
   const [query, setQuery] = useState("")
 
@@ -226,6 +220,17 @@ export default function AsportoPage() {
             </div>
           </div>
 
+          {/* Video in alto */}
+          <div className="mb-8 -mx-4 px-4">
+            <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
+              {MENU_REELS.map((src) => (
+                <div key={src} className="snap-start">
+                  <MenuReel src={src} />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Barra di ricerca */}
           <div className="mb-6 sticky top-16 md:top-20 z-20">
             <div className="relative bg-background/95 backdrop-blur-md border border-border rounded-2xl shadow-sm">
@@ -272,75 +277,68 @@ export default function AsportoPage() {
           <div className="space-y-2">
             {filtered.map((cat) => {
               const isOpen = expanded.has(cat.title) || !!query.trim()
-              const reel = !query.trim()
-                ? MENU_REELS.find((r) => r.after === cat.title)
-                : undefined
               return (
-                <div key={cat.title}>
-                  <div className="border border-border rounded-lg overflow-hidden bg-card">
-                    <button
-                      type="button"
-                      onClick={() => toggle(cat.title)}
-                      className="w-full flex items-center justify-between p-4 md:p-6 hover:bg-accent/50 transition-colors text-left"
-                      aria-expanded={isOpen}
-                    >
-                      <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                        {cat.title}
-                        {query.trim() ? (
-                          <span className="ml-2 text-sm font-normal text-muted-foreground">
-                            ({cat.items.length})
-                          </span>
-                        ) : null}
-                      </h2>
-                      <div className="flex-shrink-0 ml-4 text-muted-foreground">
-                        {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                      </div>
-                    </button>
+                <div key={cat.title} className="border border-border rounded-lg overflow-hidden bg-card">
+                  <button
+                    type="button"
+                    onClick={() => toggle(cat.title)}
+                    className="w-full flex items-center justify-between p-4 md:p-6 hover:bg-accent/50 transition-colors text-left"
+                    aria-expanded={isOpen}
+                  >
+                    <h2 className="text-xl md:text-2xl font-bold text-foreground">
+                      {cat.title}
+                      {query.trim() ? (
+                        <span className="ml-2 text-sm font-normal text-muted-foreground">
+                          ({cat.items.length})
+                        </span>
+                      ) : null}
+                    </h2>
+                    <div className="flex-shrink-0 ml-4 text-muted-foreground">
+                      {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </div>
+                  </button>
 
-                    {isOpen ? (
-                      <div className="border-t border-border p-4 md:p-6">
-                        <div className="space-y-4">
-                          {cat.items.map((item, idx) => (
-                            <div
-                              key={`${cat.title}-${idx}`}
-                              className="flex flex-col md:flex-row gap-4 p-3 rounded-lg hover:bg-accent/30 transition-colors"
-                            >
-                              {item.image && !item.image.startsWith("data:") ? (
-                                <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border border-border">
-                                  <Image
-                                    src={item.image}
-                                    alt={item.name}
-                                    width={128}
-                                    height={128}
-                                    className="w-full h-full object-cover"
-                                    unoptimized={item.image.startsWith("/")}
-                                  />
-                                </div>
-                              ) : null}
+                  {isOpen ? (
+                    <div className="border-t border-border p-4 md:p-6">
+                      <div className="space-y-4">
+                        {cat.items.map((item, idx) => (
+                          <div
+                            key={`${cat.title}-${idx}`}
+                            className="flex flex-col md:flex-row gap-4 p-3 rounded-lg hover:bg-accent/30 transition-colors"
+                          >
+                            {item.image && !item.image.startsWith("data:") ? (
+                              <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border border-border">
+                                <Image
+                                  src={item.image}
+                                  alt={item.name}
+                                  width={128}
+                                  height={128}
+                                  className="w-full h-full object-cover"
+                                  unoptimized={item.image.startsWith("/")}
+                                />
+                              </div>
+                            ) : null}
 
-                              <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-2">
-                                <div className="flex-1">
-                                  <h3 className="text-base md:text-lg font-semibold">{item.name}</h3>
-                                  {item.description ? (
-                                    <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                                  ) : null}
-                                </div>
-                                {item.price ? (
-                                  <div className="flex-shrink-0">
-                                    <span className="text-base md:text-lg font-bold text-foreground">
-                                      {item.price}
-                                    </span>
-                                  </div>
+                            <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                              <div className="flex-1">
+                                <h3 className="text-base md:text-lg font-semibold">{item.name}</h3>
+                                {item.description ? (
+                                  <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                                 ) : null}
                               </div>
+                              {item.price ? (
+                                <div className="flex-shrink-0">
+                                  <span className="text-base md:text-lg font-bold text-foreground">
+                                    {item.price}
+                                  </span>
+                                </div>
+                              ) : null}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))}
                       </div>
-                    ) : null}
-                  </div>
-
-                  {reel ? <MenuReel src={reel.src} label={reel.label} /> : null}
+                    </div>
+                  ) : null}
                 </div>
               )
             })}
