@@ -1,153 +1,129 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import Image from "next/image"
+import { ArrowLeft, Facebook, Instagram, Volume2, VolumeX } from "lucide-react"
 
-interface TeamMember {
-  id: number
-  image: string
-  title: string
-  description: string
-  layout: "left" | "right"
-  visible?: boolean
-}
+/** Aggiungi qui i nuovi video (file in public/videos/) */
+const CHI_SIAMO_VIDEOS = [
+  { id: "1", src: "/videos/chi-siamo-1.mp4" },
+  { id: "2", src: "/videos/chi-siamo-2.mp4" },
+] as const
 
-export default function ChiSiamoPage() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
-  const [loading, setLoading] = useState(true)
+const INSTAGRAM_URL = "https://www.instagram.com/birdgardenterrasini"
+const FACEBOOK_URL = "https://www.facebook.com/search/top?q=Bird%20Garden%20Terrasini"
 
-  useEffect(() => {
-    const loadTeamMembers = async () => {
-      try {
-        const response = await fetch("/api/chi-siamo", {
-          cache: "no-store"
-        })
-        if (response.ok) {
-          const data = await response.json()
-          // Filtra solo i membri visibili
-          const visibleMembers = data.filter((member: TeamMember) => member.visible !== false)
-          setTeamMembers(visibleMembers)
-        }
-      } catch (error) {
-        console.error("Error loading team members:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
+function ReelCard({ src, index }: { src: string; index: number }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [muted, setMuted] = useState(true)
 
-    loadTeamMembers()
-  }, [])
-
-  if (loading) {
-    return (
-      <main className="min-h-screen">
-        <Navigation />
-        <div className="container mx-auto px-4 py-24 md:py-32">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-muted-foreground">Caricamento...</p>
-          </div>
-        </div>
-        <Footer />
-      </main>
-    )
+  const toggleMute = () => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = !v.muted
+    setMuted(v.muted)
   }
 
   return (
-    <main className="min-h-screen">
-      <Navigation />
-      
-      <div className="container mx-auto px-4 py-24 md:py-32">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16 md:mb-24">
-            <h1 
-              className="text-4xl md:text-6xl font-bold mb-6 tracking-tight"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              Chi Siamo
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Il nostro team è composto da persone appassionate che rendono ogni esperienza al Bird Restaurant unica e indimenticabile.
-            </p>
-          </div>
+    <article
+      className="relative shrink-0 w-[78vw] max-w-[320px] sm:w-[280px] snap-center"
+      style={{ scrollSnapAlign: "center" }}
+    >
+      <div className="relative aspect-[9/16] rounded-[1.75rem] overflow-hidden bg-black shadow-[0_12px_40px_rgba(0,0,0,0.28)] ring-1 ring-white/10">
+        <video
+          ref={videoRef}
+          src={src}
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload={index === 0 ? "auto" : "metadata"}
+          aria-label={`Video Chi Siamo ${index + 1}`}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10" />
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="absolute bottom-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-md active:scale-95 transition-transform"
+          aria-label={muted ? "Attiva audio" : "Disattiva audio"}
+        >
+          {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+        </button>
+      </div>
+    </article>
+  )
+}
 
-          {/* Team Members */}
-          <div className="space-y-20 md:space-y-32">
-            {teamMembers.map((member, index) => (
-              <div
-                key={member.id}
-                className={`flex flex-col gap-10 md:gap-16 items-center ${
-                  member.layout === "right" ? "md:flex-row-reverse" : "md:flex-row"
-                }`}
-              >
-                <div className="flex-1 w-full">
-                  <div className="relative aspect-square max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl">
-                    {member.image ? (
-                      member.image.startsWith("data:image") ? (
-                        // Se è base64, usa img normale
-                        <img
-                          src={member.image}
-                          alt={member.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        // Se è un percorso URL, usa Next.js Image
-                        <Image
-                          src={member.image}
-                          alt={member.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          unoptimized={member.image.startsWith("/")}
-                        />
-                      )
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-                        Nessuna immagine
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1 w-full">
-                  <div className="h-full flex flex-col justify-center p-6 md:p-8">
-                    <h2
-                      className="text-3xl md:text-4xl font-bold mb-4 text-foreground tracking-tight"
-                      style={{ fontFamily: "var(--font-playfair), serif" }}
-                    >
-                      {member.title}
-                    </h2>
-                    <p
-                      className="text-lg md:text-xl text-muted-foreground leading-relaxed"
-                      style={{ fontFamily: "var(--font-cormorant), serif" }}
-                    >
-                      {member.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
+export default function ChiSiamoPage() {
+  return (
+    <main className="min-h-screen bg-background">
+      <Navigation />
+
+      <div className="pt-20 pb-8 md:pt-28 md:pb-16">
+        {/* Intro — max 2 righe di senso + CTA social */}
+        <header className="px-5 max-w-lg mx-auto text-center mb-8 md:mb-12">
+          <h1
+            className="text-[2rem] leading-tight md:text-5xl font-bold tracking-tight mb-4"
+            style={{ fontFamily: "var(--font-playfair), serif" }}
+          >
+            Chi Siamo
+          </h1>
+          <p className="text-[15px] md:text-base text-muted-foreground leading-snug mb-6">
+            Passione in cucina, ironia in sala e voglia di mettersi sempre in gioco.
+            Seguici su Instagram e Facebook e supporta il Bird.
+          </p>
+
+          <div className="flex items-center justify-center gap-3">
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af] shadow-md active:scale-[0.98] transition-transform"
+            >
+              <Instagram className="h-4 w-4" />
+              Instagram
+            </a>
+            <a
+              href={FACEBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-[#1877F2] shadow-md active:scale-[0.98] transition-transform"
+            >
+              <Facebook className="h-4 w-4" />
+              Facebook
+            </a>
+          </div>
+        </header>
+
+        {/* Reel strip — stile Instagram / iOS */}
+        <section className="relative" aria-label="Video dello staff">
+          <div
+            className="flex gap-4 overflow-x-auto px-[11vw] sm:px-8 md:justify-center md:px-6 pb-4 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {CHI_SIAMO_VIDEOS.map((video, index) => (
+              <ReelCard key={video.id} src={video.src} index={index} />
             ))}
           </div>
+          <p className="mt-3 text-center text-xs text-muted-foreground md:hidden">
+            Scorri per vedere gli altri video
+          </p>
+        </section>
 
-          {/* Footer Link */}
-          <div className="mt-16 md:mt-24 text-center">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Torna alla home</span>
-            </Link>
-          </div>
+        <div className="mt-12 md:mt-16 text-center px-5">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Torna alla home</span>
+          </Link>
         </div>
       </div>
-      
-      {/* Footer */}
+
       <Footer />
     </main>
   )
 }
-
