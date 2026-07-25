@@ -31,29 +31,48 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false
-    const load = async () => {
+
+    // 1) Hero subito (JSON leggero con URL)
+    const loadHero = async () => {
       try {
-        const [contentRes, postsRes] = await Promise.all([
-          fetch("/api/content"),
-          fetch("/api/posts"),
-        ])
-        if (cancelled) return
-        if (contentRes.ok) {
-          const data = await contentRes.json()
-          if (data.coverImage) setCoverImage(data.coverImage)
-          if (data.profileImage) setProfileImage(data.profileImage)
-        }
-        if (postsRes.ok) {
-          const postsData = await postsRes.json()
-          setDailyPosts(postsData.posts || [])
-        }
+        const contentRes = await fetch("/api/content")
+        if (cancelled || !contentRes.ok) return
+        const data = await contentRes.json()
+        if (data.coverImage) setCoverImage(data.coverImage)
+        if (data.profileImage) setProfileImage(data.profileImage)
       } catch (error) {
         console.error("Error loading content:", error)
       }
     }
-    load()
+
+    // 2) Post dopo idle (possono contenere media pesanti)
+    const loadPosts = async () => {
+      try {
+        const postsRes = await fetch("/api/posts")
+        if (cancelled || !postsRes.ok) return
+        const postsData = await postsRes.json()
+        setDailyPosts(postsData.posts || [])
+      } catch (error) {
+        console.error("Error loading posts:", error)
+      }
+    }
+
+    loadHero()
+
+    let idleId: number | undefined
+    let timeoutId: ReturnType<typeof setTimeout> | undefined
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(() => loadPosts(), { timeout: 2500 })
+    } else {
+      timeoutId = setTimeout(loadPosts, 800)
+    }
+
     return () => {
       cancelled = true
+      if (idleId !== undefined && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timeoutId) clearTimeout(timeoutId)
     }
   }, [])
 

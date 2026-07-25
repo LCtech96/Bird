@@ -27,7 +27,7 @@ export function HeroSection({ coverImage, profileImage }: HeroSectionProps) {
           fill
           className="object-cover"
           priority
-          unoptimized={coverIsData}
+          unoptimized={coverIsData || cover.startsWith("/api/")}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/40" />
       </div>
@@ -41,7 +41,7 @@ export function HeroSection({ coverImage, profileImage }: HeroSectionProps) {
               fill
               className="object-cover"
               priority
-              unoptimized={profileIsData}
+              unoptimized={profileIsData || profile.startsWith("/api/")}
             />
           </div>
         </div>

@@ -33,7 +33,7 @@ export function Footer() {
               <span>WhatsApp</span>
             </a>
           </div>
-          <div className="text-center mt-8 pt-6 border-t border-border space-y-2">
+          <div className="text-center mt-8 pt-6 border-t border-border">
             <p className="text-base md:text-lg font-medium" style={{ fontFamily: 'var(--font-montserrat)' }}>
               Creato da{" "}
               <a
@@ -44,9 +44,6 @@ export function Footer() {
               >
                 facevoice.ai
               </a>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              <a href="/waitlist" className="hover:underline">Nomadiqe</a> – piattaforma ospitalità
             </p>
           </div>
         </div>

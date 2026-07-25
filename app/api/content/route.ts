@@ -7,51 +7,48 @@ const DEFAULT_CONTENT = {
   profileImage: ""
 }
 
-// GET - Carica i contenuti
+// GET - Carica i contenuti (solo URL leggeri, non base64)
 export async function GET() {
   try {
-    let content = { ...DEFAULT_CONTENT }
-    
-    // Carica cover e profile images da Supabase
-    if (supabaseServer) {
-      // Carica cover image
-      const { data: coverData } = await supabaseServer
-        .from("admin_data")
-        .select("value")
-        .eq("key", "hero_cover_image")
-        .single()
-      
-      if (coverData?.value?.imageData) {
-        content.coverImage = coverData.value.imageData
-      }
-      
-      // Carica profile image
-      const { data: profileData } = await supabaseServer
-        .from("admin_data")
-        .select("value")
-        .eq("key", "hero_profile_image")
-        .single()
-      
-      if (profileData?.value?.imageData) {
-        content.profileImage = profileData.value.imageData
-      }
-      
-      // Carica altri contenuti
-      const { data, error } = await supabaseServer
-        .from("admin_data")
-        .select("value")
-        .eq("key", "content")
-        .single()
+    let hasCover = false
+    let hasProfile = false
 
-      if (!error && data?.value) {
-        // Merge con cover e profile images, mantenendo solo coverImage e profileImage
-        content = {
-          coverImage: content.coverImage || data.value.coverImage || "",
-          profileImage: content.profileImage || data.value.profileImage || ""
-        }
-      }
+    if (supabaseServer) {
+      const [{ data: coverData }, { data: profileData }, { data: contentData }] =
+        await Promise.all([
+          supabaseServer
+            .from("admin_data")
+            .select("value")
+            .eq("key", "hero_cover_image")
+            .single(),
+          supabaseServer
+            .from("admin_data")
+            .select("value")
+            .eq("key", "hero_profile_image")
+            .single(),
+          supabaseServer
+            .from("admin_data")
+            .select("value")
+            .eq("key", "content")
+            .single(),
+        ])
+
+      hasCover = !!(
+        coverData?.value?.imageData ||
+        contentData?.value?.coverImage
+      )
+      hasProfile = !!(
+        profileData?.value?.imageData ||
+        contentData?.value?.profileImage
+      )
     }
-    
+
+    // URL stabili: il browser le cache come immagini normali
+    const content = {
+      coverImage: hasCover ? "/api/hero/cover" : "",
+      profileImage: hasProfile ? "/api/hero/profile" : "",
+    }
+
     return NextResponse.json(content, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
