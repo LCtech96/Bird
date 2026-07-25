@@ -6,6 +6,7 @@ import { Description } from "@/components/Description"
 import { Address } from "@/components/Address"
 import { Footer } from "@/components/Footer"
 import { AIAssistant } from "@/components/AIAssistant"
+import { HomeVideoBackground } from "@/components/HomeVideoBackground"
 import { useEffect, useState } from "react"
 
 interface DailyPost {
@@ -50,20 +51,25 @@ export default function Home() {
 
   if (loading) {
     return (
-      <main className="min-h-screen relative z-10">
-        <Navigation />
-        <div className="container mx-auto px-4 py-24 md:py-32">
-          <div className="max-w-7xl mx-auto text-center">
-            <p className="text-muted-foreground">Caricamento...</p>
+      <main className="min-h-screen relative">
+        <HomeVideoBackground />
+        <div className="relative z-10">
+          <Navigation />
+          <div className="container mx-auto px-4 py-24 md:py-32">
+            <div className="max-w-7xl mx-auto text-center">
+              <p className="text-muted-foreground">Caricamento...</p>
+            </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen relative z-10">
+    <main className="min-h-screen relative">
+      <HomeVideoBackground />
+      <div className="relative z-10">
       <Navigation />
       
       {/* Hero Section with Cover and Profile */}
@@ -160,6 +166,7 @@ export default function Home() {
 
       {/* AI Assistant */}
       <AIAssistant />
+      </div>
     </main>
   )
 }
