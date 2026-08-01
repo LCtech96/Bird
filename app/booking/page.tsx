@@ -2,6 +2,7 @@
 
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
+import { HomeVideoBackground } from "@/components/HomeVideoBackground"
 import { useState } from "react"
 import { Calendar, Users, Mail, Phone, User, CheckCircle } from "lucide-react"
 
@@ -71,7 +72,9 @@ export default function BookingPage() {
   const today = new Date().toISOString().split("T")[0]
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      <HomeVideoBackground />
+      <div className="relative z-10">
       <Navigation />
       
       <div className="container mx-auto px-4 py-24 md:py-32">
@@ -90,7 +93,7 @@ export default function BookingPage() {
           </div>
 
           {submitted ? (
-            <div className="bg-card border border-border rounded-2xl p-8 text-center">
+            <div className="bg-card/90 backdrop-blur-sm border border-border rounded-2xl p-8 text-center shadow-xl">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">Richiesta Inviata!</h2>
               <p className="text-muted-foreground mb-6">
@@ -104,7 +107,7 @@ export default function BookingPage() {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-card/90 backdrop-blur-sm border border-border rounded-2xl p-8 space-y-6 shadow-xl">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2 flex items-center gap-2">
                   <User className="w-4 h-4" />
@@ -233,6 +236,7 @@ export default function BookingPage() {
       </div>
       
       <Footer />
+      </div>
     </main>
   )
 }
