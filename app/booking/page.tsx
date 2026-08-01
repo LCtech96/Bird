@@ -4,13 +4,11 @@ import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import { HomeVideoBackground } from "@/components/HomeVideoBackground"
 import { useState } from "react"
-import { Calendar, Users, Mail, Phone, User, CheckCircle } from "lucide-react"
+import { Calendar, Users, User, CheckCircle } from "lucide-react"
 
 export default function BookingPage() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
-    phone: "",
     guests: "",
     date: "",
     time: ""
@@ -35,8 +33,6 @@ export default function BookingPage() {
       `La disponibilità verrà valutata dal proprietario del locale.\n\n` +
       `*Dettagli della richiesta:*\n` +
       `👤 Nome: ${formData.name}\n` +
-      `📧 Email: ${formData.email}\n` +
-      `📱 Telefono: ${formData.phone}\n` +
       `👥 Numero di persone: ${formData.guests}\n` +
       `📅 Data: ${formattedDate}\n` +
       `🕐 Orario: ${formData.time}\n\n` +
@@ -53,8 +49,6 @@ export default function BookingPage() {
     setSubmitted(true)
     setFormData({
       name: "",
-      email: "",
-      phone: "",
       guests: "",
       date: "",
       time: ""
@@ -122,40 +116,6 @@ export default function BookingPage() {
                   required
                   className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Il tuo nome"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2 flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="tua.email@esempio.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-2 flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  Cellulare
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="+39 123 456 7890"
                 />
               </div>
 
@@ -240,4 +200,3 @@ export default function BookingPage() {
     </main>
   )
 }
-
