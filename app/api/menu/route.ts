@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuth, isAuthenticated } from "@/lib/auth"
 import { supabaseServer } from "@/lib/supabase-server"
-import { defaultMenuCategories } from "@/lib/menu-data-default"
+import { defaultMenuCategories, MENU_PDF_SYNC_AT } from "@/lib/menu-data-default"
 
 // GET - Carica il menu
 export async function GET() {
@@ -11,11 +11,21 @@ export async function GET() {
     if (supabaseServer) {
       const { data, error } = await supabaseServer
         .from("admin_data")
-        .select("value")
+        .select("value, updated_at")
         .eq("key", "menu")
         .single()
 
-      if (!error && data && data.value && Array.isArray(data.value) && data.value.length > 0) {
+      // Usa il DB solo se aggiornato dopo il sync del PDF ufficiale; altrimenti i default
+      const dbUpdatedAt = data?.updated_at ? new Date(data.updated_at).getTime() : 0
+      const pdfSyncAt = new Date(MENU_PDF_SYNC_AT).getTime()
+      if (
+        !error &&
+        data &&
+        data.value &&
+        Array.isArray(data.value) &&
+        data.value.length > 0 &&
+        dbUpdatedAt > pdfSyncAt
+      ) {
         menu = data.value
       }
     }
