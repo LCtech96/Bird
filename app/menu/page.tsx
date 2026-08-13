@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { ChevronDown, ChevronUp, Search, X, Volume2, VolumeX } from "lucide-react"
+import { Search, X, Volume2, VolumeX } from "lucide-react"
 import { Navigation } from "@/components/Navigation"
 import { Footer } from "@/components/Footer"
 import Image from "next/image"
@@ -29,6 +29,67 @@ const MENU_REELS: string[] = [
   `${SUPABASE_MENU_VIDEOS}/menu-3.mp4`,
   `${SUPABASE_MENU_VIDEOS}/menu-4.mp4`,
   `${SUPABASE_MENU_VIDEOS}/menu-5.mp4`,
+]
+
+/** Pagine del PDF ufficiale (1–45), identiche al file qrcodekit. */
+const MENU_PDF_PAGES = Array.from({ length: 45 }, (_, i) => {
+  const n = String(i + 1).padStart(2, "0")
+  return {
+    page: i + 1,
+    src: `/menu-pdf/page-${n}.jpg`,
+  }
+})
+
+/**
+ * Indice testo → pagine PDF per far funzionare la ricerca
+ * sulle pagine grafiche ufficiali.
+ */
+const PAGE_SEARCH_INDEX: { page: number; text: string }[] = [
+  { page: 1, text: "copertina bird garden terrasini menù ristorante pizzeria" },
+  { page: 2, text: "piatto del giorno maître di sala" },
+  { page: 3, text: "aperitivi sambitter martini americano negroni cocktail gin tonic lemon vodka cuba libre ricard pernod" },
+  { page: 4, text: "spritz aperol campari hugo italicus sarti mandarita" },
+  { page: 5, text: "antipasti di pesce cozze zuppa cocktail gamberi insalata mare delizia mediterranea ostriche" },
+  { page: 6, text: "antipasti di carne bruschette antipasto caldo fritto patate caprese tartare manzo" },
+  { page: 7, text: "primi spaghetti vongole scoglio farfallette salmone risotto marinara gambero zucca pennette bird francescana carbonara" },
+  { page: 8, text: "secondi di pesce fresco umido frittura totano calamaro calamaretti pesce spada gamberoni grigliata" },
+  { page: 9, text: "secondi di carne bistecca tagliata manzo filetto grigliata involtini pollo hamburger cheeseburger bacon" },
+  { page: 10, text: "contorni patate verdure spinaci insalata contadina mista insalatone bird capricciosa tuttosole caesar" },
+  { page: 11, text: "pizze gourmet pistacchiosa trentina pantesca datterino" },
+  { page: 12, text: "pizze margherita bufala napoli romana quattro gusti capricciosa diavola crudo sfincionella gustosità ciliegina prataiola calzone enzo" },
+  { page: 13, text: "pizze bird chicken bbq ida patatosa vegetariana parmigiana salsiccia funghi porcini campagnola salmone sindaco marinara tonno" },
+  { page: 14, text: "pizze bianche biancaneve friarielli bolognese quattro formaggi deliziosa pizza pane campana caprese norvegese limone" },
+  { page: 15, text: "schiacciate siciliana bird contadina gustosità greca deliziosa pani cunsatu integrale senza glutine" },
+  { page: 16, text: "dessert parfait cheescake tiramisù cassatelle soufflé tartufo sorbetto frutta ananas cantalupo melone digestivi caffè limoncello amaro" },
+  { page: 17, text: "bibite acqua naturale frizzante cocacola sprite fanta lemonsoda chinotto tonica succo red bull" },
+  { page: 18, text: "birre alla spina forst bionda rossa" },
+  { page: 19, text: "birre bottiglia heineken paulaner moretti corona ceres tennent peroni nastro azzurro" },
+  { page: 20, text: "birre leffe blond radieuse messina cristalli sale" },
+  { page: 21, text: "citazioni vino" },
+  { page: 22, text: "vini bianchi white wines" },
+  { page: 23, text: "donnafugata damarino sur sur anthilia ben rye" },
+  { page: 24, text: "duca di salaparuta lavico bianco sentiero del vento kados" },
+  { page: 25, text: "angimbé insolia lucido shamaris" },
+  { page: 26, text: "donnafugata opera unica contessa entellina chardonnay" },
+  { page: 27, text: "tasca regaleali leone cavallo delle fate nozze d'oro merano sauvignon muller pinot gewurztraminer" },
+  { page: 28, text: "rose wines sparkling wine vini rosati spumanti" },
+  { page: 29, text: "charme milazzo bianco di nera rosè di rosa" },
+  { page: 30, text: "donnafugata lumera gorghi tondi babbio lavico rosa" },
+  { page: 31, text: "franciacorta bellavista ferrari" },
+  { page: 32, text: "veuve clicquot moet chandon champagne" },
+  { page: 33, text: "vini rossi red wines" },
+  { page: 34, text: "conti d'almerita la monaca regaleali lamuri vigna san francesco rosso del conte" },
+  { page: 35, text: "corvo florio passo delle mule gorghi tondi meridiano spassoso sorelle sala coste preola" },
+  { page: 36, text: "controdanza cerasuolo vittoria la segreta frappato plumbago" },
+  { page: 37, text: "lavico rosso aut sicilia barbera dolcetto" },
+  { page: 38, text: "merlot benuara disueri sagana noa" },
+  { page: 39, text: "sedara sul vulcano sherazade floramundi" },
+  { page: 40, text: "amarone passera scopaiola piro piro" },
+  { page: 41, text: "magnum cusumano benuara tasca la monaca" },
+  { page: 42, text: "whisky bourbon johnnie walker ballantine jack daniel jim beam four roses" },
+  { page: 43, text: "gin tanqueray hendrick malfy gordon bombay sapphire" },
+  { page: 44, text: "vodka moskovskaya belvedere grey goose beluga" },
+  { page: 45, text: "allergeni glutine latte uova soia sesamo crostacei molluschi" },
 ]
 
 const INITIAL_CATEGORIES: MenuCategory[] = menuCategoriesFromPublic.map((cat) => ({
@@ -65,17 +126,7 @@ function editDistance(a: string, b: string): number {
 }
 
 const SEARCH_SYNONYMS: Record<string, string[]> = {
-  pasta: [
-    "spaghetti",
-    "pennette",
-    "farfalle",
-    "farfallette",
-    "risotto",
-    "carbonara",
-    "scoglio",
-    "vongole",
-    "primi",
-  ],
+  pasta: ["spaghetti", "pennette", "farfalle", "farfallette", "risotto", "carbonara", "scoglio", "vongole", "primi"],
   primo: ["primi", "pasta", "spaghetti", "pennette", "farfalle", "farfallette", "risotto"],
   primi: ["pasta", "spaghetti", "pennette", "farfalle", "farfallette", "risotto"],
   pizza: ["pizze", "margherita", "calzone", "sfincionella", "pizza pane", "schiacciate"],
@@ -84,7 +135,8 @@ const SEARCH_SYNONYMS: Record<string, string[]> = {
   carne: ["filetto", "manzo", "prosciutto", "salsiccia", "pollo", "ragù", "tartare"],
   dolce: ["dessert", "tiramisu", "gelato", "torta", "frutta"],
   dolci: ["dessert", "tiramisu", "gelato", "torta"],
-  vino: ["prosecco", "birra", "digestivi", "spritz", "aperitivi"],
+  vino: ["vini", "prosecco", "birra", "digestivi", "spritz", "aperitivi", "champagne"],
+  vini: ["vino", "bianchi", "rossi", "donnafugata", "tasca"],
   birra: ["birre", "spina", "forst"],
   spritz: ["aperol", "campari", "hugo", "italicus", "sarti", "mandarita"],
 }
@@ -111,9 +163,19 @@ function dishMatches(item: MenuItem, categoryTitle: string, query: string): bool
   if (!q) return true
   const queryTokens = q.split(" ").filter((t) => t.length > 1)
   if (queryTokens.length === 0) return true
-
   const blob = normalize(`${categoryTitle} ${item.name} ${item.description || ""}`)
+  return queryTokens.every((token) => {
+    const variants = [token, ...(SEARCH_SYNONYMS[token] || []).map(normalize)]
+    return variants.some((variant) => tokenMatchesHaystack(blob, variant))
+  })
+}
 
+function pageMatches(pageText: string, query: string): boolean {
+  const q = normalize(query)
+  if (!q) return true
+  const queryTokens = q.split(" ").filter((t) => t.length > 1)
+  if (queryTokens.length === 0) return true
+  const blob = normalize(pageText)
   return queryTokens.every((token) => {
     const variants = [token, ...(SEARCH_SYNONYMS[token] || []).map(normalize)]
     return variants.some((variant) => tokenMatchesHaystack(blob, variant))
@@ -173,7 +235,6 @@ function MenuReel({ src }: { src: string }) {
 }
 
 export default function MenuPage() {
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [categories, setCategories] = useState<MenuCategory[]>(INITIAL_CATEGORIES)
   const [query, setQuery] = useState("")
 
@@ -201,9 +262,9 @@ export default function MenuPage() {
     }
   }, [])
 
-  const filtered = useMemo(() => {
+  const filteredDishes = useMemo(() => {
     const q = query.trim()
-    if (!q) return categories
+    if (!q) return []
     return categories
       .map((cat) => ({
         ...cat,
@@ -212,24 +273,27 @@ export default function MenuPage() {
       .filter((cat) => cat.items.length > 0)
   }, [categories, query])
 
-  useEffect(() => {
-    if (!query.trim()) return
-    setExpanded(new Set(filtered.map((c) => c.title)))
-  }, [query, filtered])
+  const visiblePages = useMemo(() => {
+    const q = query.trim()
+    if (!q) return MENU_PDF_PAGES
+    const matched = new Set(
+      PAGE_SEARCH_INDEX.filter((p) => pageMatches(p.text, q)).map((p) => p.page)
+    )
+    // anche pagine collegate ai piatti trovati via titolo categoria
+    for (const cat of filteredDishes) {
+      const hit = PAGE_SEARCH_INDEX.find((p) =>
+        normalize(p.text).includes(normalize(cat.title).split(" ")[0] || "")
+      )
+      if (hit) matched.add(hit.page)
+    }
+    return MENU_PDF_PAGES.filter((p) => matched.has(p.page))
+  }, [query, filteredDishes])
 
-  const toggle = (title: string) => {
-    setExpanded((prev) => {
-      const next = new Set(prev)
-      if (next.has(title)) next.delete(title)
-      else next.add(title)
-      return next
-    })
-  }
-
-  const totalResults = filtered.reduce((acc, c) => acc + c.items.length, 0)
+  const totalDishResults = filteredDishes.reduce((acc, c) => acc + c.items.length, 0)
+  const isSearching = !!query.trim()
 
   return (
-    <main className="min-h-screen bg-white text-neutral-900 dark:bg-background dark:text-foreground">
+    <main className="min-h-screen bg-[#f4f5f7] text-neutral-900 dark:bg-background dark:text-foreground">
       <Navigation />
 
       <div className="mx-auto w-full max-w-xl px-4 pt-6 pb-8 md:pt-24 md:pb-12">
@@ -248,7 +312,7 @@ export default function MenuPage() {
 
         {/* Video in alto */}
         <div className="mb-7 -mx-4 px-4">
-          <div className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory scrollbar-none">
+          <div className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory">
             {MENU_REELS.map((src) => (
               <div key={src} className="snap-start">
                 <MenuReel src={src} />
@@ -280,89 +344,72 @@ export default function MenuPage() {
               </button>
             ) : null}
           </div>
-          {query.trim() ? (
+          {isSearching ? (
             <p className="mt-2 text-sm text-neutral-500 dark:text-muted-foreground text-center">
-              {totalResults === 0
-                ? "Nessun piatto trovato — prova un altro termine"
-                : `${totalResults} piatt${totalResults === 1 ? "o" : "i"} trovat${totalResults === 1 ? "o" : "i"}`}
+              {visiblePages.length === 0 && totalDishResults === 0
+                ? "Nessun risultato — prova un altro termine"
+                : `${visiblePages.length} pagin${visiblePages.length === 1 ? "a" : "e"}${
+                    totalDishResults
+                      ? ` · ${totalDishResults} piatt${totalDishResults === 1 ? "o" : "i"}`
+                      : ""
+                  }`}
             </p>
           ) : null}
         </div>
 
-        <div className="space-y-2.5">
-          {filtered.map((cat) => {
-            const isOpen = expanded.has(cat.title) || !!query.trim()
-            return (
-              <div
-                key={cat.title}
-                className="border border-neutral-200 dark:border-border rounded-xl overflow-hidden bg-white dark:bg-card"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggle(cat.title)}
-                  className="w-full flex items-center justify-between px-4 py-4 md:px-5 md:py-5 hover:bg-neutral-50 dark:hover:bg-accent/50 transition-colors text-left"
-                  aria-expanded={isOpen}
-                >
-                  <h2 className="text-lg md:text-xl font-semibold text-neutral-900 dark:text-foreground">
-                    {cat.title}
-                    {query.trim() ? (
-                      <span className="ml-2 text-sm font-normal text-neutral-400">({cat.items.length})</span>
-                    ) : null}
-                  </h2>
-                  <div className="flex-shrink-0 ml-3 text-neutral-400">
-                    {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                  </div>
-                </button>
-
-                {isOpen ? (
-                  <div className="border-t border-neutral-200 dark:border-border px-4 py-3 md:px-5 md:py-4">
-                    <div className="space-y-4">
-                      {cat.items.map((item, idx) => (
-                        <div
-                          key={`${cat.title}-${idx}`}
-                          className="flex flex-col sm:flex-row gap-3 py-1"
-                        >
-                          {item.image && !item.image.startsWith("data:") ? (
-                            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-border">
-                              <Image
-                                src={item.image}
-                                alt={item.name}
-                                width={96}
-                                height={96}
-                                className="w-full h-full object-cover"
-                                unoptimized={item.image.startsWith("/")}
-                              />
-                            </div>
-                          ) : null}
-
-                          <div className="flex-1 flex items-start justify-between gap-3">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-[15px] md:text-base font-semibold text-neutral-900 dark:text-foreground">
-                                {item.name}
-                              </h3>
-                              {item.description ? (
-                                <p className="text-sm text-neutral-500 dark:text-muted-foreground mt-0.5 leading-snug">
-                                  {item.description}
-                                </p>
-                              ) : null}
-                            </div>
-                            {item.price ? (
-                              <div className="flex-shrink-0 pt-0.5">
-                                <span className="text-[15px] md:text-base font-bold text-neutral-900 dark:text-foreground whitespace-nowrap">
-                                  {item.price}
-                                </span>
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
+        {/* Risultati testuali durante la ricerca */}
+        {isSearching && totalDishResults > 0 ? (
+          <div className="mb-6 space-y-3 rounded-2xl border border-neutral-200 bg-white p-4 dark:border-border dark:bg-card">
+            {filteredDishes.map((cat) => (
+              <div key={cat.title}>
+                <h2 className="text-sm font-semibold text-neutral-500 mb-2">{cat.title}</h2>
+                <ul className="space-y-2">
+                  {cat.items.map((item, idx) => (
+                    <li key={`${cat.title}-${idx}`} className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[15px] font-semibold">{item.name}</p>
+                        {item.description ? (
+                          <p className="text-sm text-neutral-500 leading-snug">{item.description}</p>
+                        ) : null}
+                      </div>
+                      {item.price ? (
+                        <span className="flex-shrink-0 text-[15px] font-bold whitespace-nowrap">{item.price}</span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            )
-          })}
+            ))}
+          </div>
+        ) : null}
+
+        {/* Pagine grafiche del PDF ufficiale — identiche al link */}
+        <div className="space-y-4 md:space-y-5">
+          {visiblePages.map((page) => (
+            <article
+              key={page.page}
+              id={`menu-page-${page.page}`}
+              className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5"
+            >
+              <Image
+                src={page.src}
+                alt={`Menù Bird Garden — pagina ${page.page}`}
+                width={1788}
+                height={2529}
+                className="w-full h-auto block"
+                sizes="(max-width: 640px) 100vw, 576px"
+                priority={page.page <= 2}
+                quality={85}
+              />
+            </article>
+          ))}
         </div>
+
+        {!isSearching ? (
+          <p className="mt-6 text-center text-xs text-neutral-400">
+            Menù ufficiale Bird Garden · {MENU_PDF_PAGES.length} pagine
+          </p>
+        ) : null}
       </div>
 
       <Footer />
