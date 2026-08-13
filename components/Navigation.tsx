@@ -71,28 +71,28 @@ export function Navigation({ className }: NavigationProps) {
       </nav>
 
       {/* Mobile Navigation - Bottom */}
-      <nav className={cn("md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm border-t border-border", className)}>
-        <div className="flex items-center justify-around px-4 py-3">
+      <nav className={cn("md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-background/95 backdrop-blur-md border-t border-neutral-200 dark:border-border", className)}>
+        <div className="flex items-center justify-around px-2 py-2.5">
           {navItems.map((item) => {
             const Icon = item.icon
             return (
               <button
                 key={item.id}
                 onClick={() => handleClick(item.id)}
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-accent transition-colors min-w-[64px]"
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-xs">{item.label}</span>
+                <Icon className="w-5 h-5 text-neutral-800 dark:text-foreground" />
+                <span className="text-[11px] text-neutral-700 dark:text-foreground">{item.label}</span>
               </button>
             )
           })}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+            className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-accent transition-colors min-w-[64px]"
             aria-label="Toggle theme"
           >
-            {mounted && theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            <span className="text-xs">Tema</span>
+            {mounted && theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5 text-neutral-800" />}
+            <span className="text-[11px] text-neutral-700 dark:text-foreground">Tema</span>
           </button>
         </div>
       </nav>

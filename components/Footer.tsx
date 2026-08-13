@@ -13,12 +13,12 @@ export function Footer() {
 
   return (
     <>
-      <footer className="bg-background border-t border-border py-8 pb-24 md:pb-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-6">
+      <footer className="bg-white dark:bg-background border-t border-neutral-200 dark:border-border py-8 pb-24 md:pb-8">
+        <div className="mx-auto w-full max-w-xl px-4">
+          <div className="flex flex-col items-center justify-center gap-3 mb-6">
             <button
               onClick={() => handleClick("facebook")}
-              className="flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              className="flex w-full max-w-xs items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#1877F2] text-white hover:bg-[#166FE5] transition-colors"
             >
               <Facebook className="w-5 h-5" />
               <span>Facebook</span>
@@ -27,20 +27,20 @@ export function Footer() {
               href="https://wa.me/393203754312"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
+              className="flex w-full max-w-xs items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] text-white hover:bg-[#1EBE57] transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
               <span>WhatsApp</span>
             </a>
           </div>
-          <div className="text-center mt-8 pt-6 border-t border-border">
-            <p className="text-base md:text-lg font-medium" style={{ fontFamily: 'var(--font-montserrat)' }}>
+          <div className="text-center mt-6 pt-5 border-t border-neutral-200 dark:border-border">
+            <p className="text-sm md:text-base text-neutral-600 dark:text-muted-foreground" style={{ fontFamily: 'var(--font-montserrat)' }}>
               Creato da{" "}
               <a
                 href="https://www.facevoice.ai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary hover:underline font-semibold transition-colors"
+                className="text-neutral-900 dark:text-foreground hover:underline font-bold transition-colors"
               >
                 facevoice.ai
               </a>
